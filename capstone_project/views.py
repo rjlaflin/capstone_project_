@@ -8,3 +8,7 @@ class Home(View):
 class Information(View):
     def get(self, request):
         return render(request, "info.html")
+
+class Login(View):
+    def get(self, request):
+        return render(request, "login.html")

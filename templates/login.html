@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Goal Tracker - Login</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        h1 {
+            color: #53ca4e;
+            background-color: white;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        form{
+            height: 100%
+        }
+
+        #Login-BodyWrapperContainer {
+            border: 3px solid dodgerblue;
+            width: 50%;
+            height: 100%;
+            margin-top: 5%;
+            margin-bottom: auto;
+            margin-left:auto;
+            margin-right:auto;
+            background-color: white
+        }
+
+
+
+        p {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id= "Login-BodyWrapperContainer" class = "container">
+        <div>
+            <h1>Log In</h1>
+            <form action="/" method="post"> {% csrf_token %}
+                <div class="username_password" id="LoginUserPassWrapper">
+                    <input id="Login-Username" class="form-field" type="text" placeholder="Enter email" name="uname" required>
+
+                    <input id="Login-Password" class="form-field" type="password" placeholder="Enter password" name="psw" required>
+
+                    <button id="Login-SubmitButton" type="submit">Log In</button>
+                </div>
+            </form>
+            <div>
+                <p id="Login-ErrorMessage" class="error-message">{{ message }}</p>
+            </div>
+        </div>
+        <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    </div>
+
+</body>
+</html>
