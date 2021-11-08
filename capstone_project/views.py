@@ -5,15 +5,16 @@ from typing import Dict, Type
 from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-id_count = 0
 
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
 
+
 class Information(View):
     def get(self, request):
         return render(request, "info.html")
+
 
 class Login(View):
     def get(self, request):
@@ -23,21 +24,42 @@ class Login(View):
     def post(self, request):
         print(request.POST['uname'] + request.POST['psw'])
 
-        name = None
+        user = None
         try:
-            name = User.objects.get(name=request.POST['uname'])
-            request.session["name"] = name.name
+            user = User.objects.get(unique_id=request.POST['uname'])
+            request.session["uname"] = user.uname
         except:
             pass
-        if name is not None and name.pwd == request.POST['psw']:
+        if user is not None and user.pwd == request.POST['psw']:
             request.session["uname"] = request.POST["uname"]
-            if name.user_type == 0:
+            if user.user_type == 0:
                 return redirect("/home_Supervisor.html")
+            if user.user_type == 1:
+                return redirect("/home_instructor.html")
+            if user.user_type == 2:
+                return redirect("/home_patient.html")
         return render(request, "login.html", {'message': 'Invalid name/password'})
+
 
 class HomeSupervisor(View):
     def get(self, request):
         return render(request, "home_Supervisor.html")
+
+    def post(self,request):
+        pass
+
+
+class HomeInstructor(View):
+    def get(self, request):
+        return render(request, "home_instructor.html")
+
+    def post(self,request):
+        pass
+
+
+class HomePatient(View):
+    def get(self, request):
+        return render(request, "home_patient.html")
 
     def post(self,request):
         pass
