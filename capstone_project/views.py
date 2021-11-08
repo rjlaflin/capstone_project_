@@ -5,6 +5,8 @@ from typing import Dict, Type
 from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
+id_count = 0
+
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
@@ -37,4 +39,24 @@ class HomeSupervisor(View):
     def get(self, request):
         return render(request, "home_Supervisor.html")
 
+    def post(self,request):
+        pass
 
+class AddSupervisor(View):
+    def get(self, request):
+        return render(request, "add_supervisor.html")
+
+    def post(self, request):
+        name = request.POST["name"]
+        uname = request.POST["uname"]
+        password = request.POST["pwd"]
+        insurance_info = request.POST["ins"]
+        id1 = User.objects.all().count()
+        print(id1)
+        #id2 = id+1
+        if name != '':
+            new_supervisor = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info)
+            new_supervisor.save()
+
+        return render(request, "home_Supervisor.html")

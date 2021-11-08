@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from capstone_project.views import Home, Information, Login, HomeSupervisor
+from capstone_project.views import Home, Information, Login, HomeSupervisor, AddSupervisor
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login.html', Login.as_view()),
     path('', Home.as_view()),
     path('info.html', Information.as_view()),
-    path('home_Supervisor.html', HomeSupervisor.as_view())
+    path('home_Supervisor.html', HomeSupervisor.as_view()),
+    path('add_supervisor.html', AddSupervisor.as_view()),
 ]
