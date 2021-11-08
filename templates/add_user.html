@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add user</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'capstone_project/style.css' %}">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Add Supervisor</h1>
+    <form method="post">
+        {% csrf_token %}
+        New User's role:
+        <select name="role">
+            <option value="Supervisor">Supervisor</option>
+            <option value="Instructor">Instructor</option>
+            <option value="Patient">Patient</option>
+        </select>
+        <br><br>
+        New User's name: <input type="text" name="name" required>
+        <br><br>
+        New User's username: <input type="text" name="uname" required>
+        <br><br>
+        New User's password: <input type="text" name="pwd" required>
+        <br><br>
+        New User's insurance information: <input type="text" name="ins">
+        <br><br>
+        <input type="submit" value="add user">
+    </form>
+    <br><br>
+    <a href="/home_Supervisor.html">Supervisor Homepage</a>
+</body>
+</html>
