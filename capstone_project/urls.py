@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from capstone_project.views import Home, Information, Login, HomeSupervisor, AddUser
+from capstone_project.views import Home, Information, Login, HomeSupervisor, AddUser, HomeInstructor, HomePatient
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,6 @@ urlpatterns = [
     path('info.html', Information.as_view()),
     path('home_Supervisor.html', HomeSupervisor.as_view()),
     path('add_user.html', AddUser.as_view()),
+    path('home_instructor.html', HomeInstructor.as_view()),
+    path('home_patient.html', HomePatient.as_view()),
 ]
