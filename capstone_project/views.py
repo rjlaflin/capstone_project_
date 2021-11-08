@@ -42,9 +42,9 @@ class HomeSupervisor(View):
     def post(self,request):
         pass
 
-class AddSupervisor(View):
+class AddUser(View):
     def get(self, request):
-        return render(request, "add_supervisor.html")
+        return render(request, "add_user.html")
 
     def post(self, request):
         name = request.POST["name"]
@@ -52,11 +52,20 @@ class AddSupervisor(View):
         password = request.POST["pwd"]
         insurance_info = request.POST["ins"]
         id1 = User.objects.all().count()
-        print(id1)
-        #id2 = id+1
-        if name != '':
-            new_supervisor = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info)
-            new_supervisor.save()
+        if name != '' and uname != '' and password != '':
+            if request.POST["role"] == 'Supervisor':
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='0')
+                new_user.save()
+            elif request.POST["role"] == 'Instructor':
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='1')
+                new_user.save()
+            elif request.POST["role"] == 'Patient':
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='2')
+                new_user.save()
+            else:
+                return render(request, "home.html")
 
         return render(request, "home_Supervisor.html")
