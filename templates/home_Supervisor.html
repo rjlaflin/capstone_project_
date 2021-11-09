@@ -7,7 +7,35 @@
     <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
 </head>
 <body class="home_supervisor">
-<h1>Supervisor Page</h1>
+<h1>Supervisor Page
+//
+<table width="100%" height="250%" align="center" border="1">
+      <tr>
+          <th colspan="7" style="background-color: Lavender; font-size:30px" height="40">Courses</th>
+      </tr>
+      <tr align="center" style="background-color: Lavender; font-size:30px" height="40">
+          <td style="width:15px">Name</td>
+          <td style="width:1px">Instructor</td>
+          <td style="width:60px">Training</td>
+      </tr>
+      {% for i in User %}
+          <tr align="center" height="40" style="background-color: Ivory; font-size:30px">
+              <td>{{ i.name }}</td>
+              <td>
+{#                  {{ i.instructor.lastName }}, {{ i.instructor.firstName }}<br>#}
+{#                  {{ i.instructor.email }}<br>#}
+{#                  {{ i.instructor.phoneNumber }}#}
+              </td>
+{#              <td>#}
+{#                  {% for j in i.sections %}#}
+{#                      {{ j }}<br>#}
+{#                  {% endfor %}#}
+{#              </td>#}
+          </tr>
+      {% endfor %}
+    </table><br><br>
+//
+
 <a href="/add_user.html">Add new user</a>
 <br><br>
 <a href="/">Back</a>

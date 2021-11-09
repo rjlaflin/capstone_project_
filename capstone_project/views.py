@@ -43,10 +43,17 @@ class Login(View):
 
 class HomeSupervisor(View):
     def get(self, request):
-        return render(request, "home_Supervisor.html")
+
+        return render(request, "home_Supervisor.html", get_admin_template_data())
 
     def post(self,request):
         pass
+
+def get_admin_template_data():
+    return {
+        "User": list(User.objects.all()),
+        "Supervicor": list(User.objects.all()),
+    }
 
 
 class HomeInstructor(View):
@@ -59,7 +66,8 @@ class HomeInstructor(View):
 
 class HomePatient(View):
     def get(self, request):
-        return render(request, "home_patient.html")
+        user = User.objects.get(unique_id=request.session["uname"])
+        return render(request, "home_patient.html", {"user_info": user})
 
     def post(self,request):
         pass
