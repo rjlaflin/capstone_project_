@@ -1,6 +1,6 @@
 from django.views import View
 from django.shortcuts import render, redirect
-from .models import User
+from .models import User, Goals
 from typing import Dict, Type
 from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -14,6 +14,11 @@ class Home(View):
 class Information(View):
     def get(self, request):
         return render(request, "info.html")
+
+
+class GetGoals(View):
+    def get(self, request):
+        return render(request, "goals.html", get_goal_data())
 
 
 class Login(View):
@@ -55,6 +60,10 @@ def get_admin_template_data():
         "Supervicor": list(User.objects.all()),
     }
 
+def get_goal_data():
+    return {
+        "Goals": list(Goals.objects.all())
+    }
 
 class HomeInstructor(View):
     def get(self, request):
@@ -99,3 +108,4 @@ class AddUser(View):
                 return render(request, "home.html")
 
         return render(request, "home_Supervisor.html")
+

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <meta charset="UTF-8">
+    <title>Goals Page</title>
+    <style>
+       span {
+           color: #40acf1;
+           font-size: 20px
+        }
+        .TableHeaderGoalNumberColumn{
+           width: 10%;
+        }
+        .TableHeaderGoalColumn{
+           width: 70%;
+        }
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+           border: 1px solid black;
+         border-collapse: collapse;
+            table-layout: fixed;
+        }
+        th, td {
+           border: 1px solid black;
+           border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+   <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+   <br>
+   <div class="TableLabel">
+       <span>Current Goal Table</span>
+    </div>
+   <table id="CurrentGoalsTable">
+       <thead>
+           <th class="TableHeaderGoalNumberColumn">User</th>
+            <th class="TableHeaderGoalColumn">Goal</th>
+            <th class="Table Header Status Column">Completion Status</th>
+        </thead>
+       <tbody>
+           {% for i in Goals %}
+                {% if i.goalcurrency == 1 %}
+                    <tr>
+                        <td>{{ i.userforgoal.name }}</td>
+                        <td>{{ i.goal }}</td>
+                        <td>{{ i.statusofgoal }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <div class="TableLabel">
+       <span>Completed Goal Table</span>
+    </div>
+    <table id="CompletedGoalsTable">
+       <thead>
+           <th class="TableHeaderGoalNumberColumn">User</th>
+            <th class="TableHeaderGoalColumn">Goal</th>
+            <th class="TableHeaderStatusColumn">Completion Status</th>
+        </thead>
+       <tbody>
+           {% for i in Goals %}
+                {% if i.goalcurrency == 0 %}
+                    <tr>
+                        <td>{{ i.userforgoal.name }}</td>
+                        <td>{{ i.goal }}</td>
+                        <td>{{ i.statusofgoal }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        <tbody>
+    </table>
+    <br>
+    <div class="TableLabel">
+       <span>Future Goal Table</span>
+    </div>
+    <table id="FutureGoalsTable">
+       <thead>
+           <th class="TableHeaderGoalNumberColumn">User</th>
+            <th class="TableHeaderGoalColumn">Goal</th>
+            <th class="TableHeaderStatusColumn">Completion Status</th>
+        </thead>
+       <tbody>
+           {% for i in Goals %}
+                {% if i.goalcurrency == 2 %}
+                    <tr>
+                        <td>{{ i.userforgoal.name }}</td>
+                        <td>{{ i.goal }}</td>
+                        <td>{{ i.statusofgoal }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        <tbody>
+    </table>
+    <br>
+    <a href="/">Back</a>
+
+</body>
+</html>
