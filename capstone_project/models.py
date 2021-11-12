@@ -19,7 +19,6 @@ class User(models.Model):
     )
     insurance_information = models.CharField(max_length=1000)
 
-
 class StatusTable(models.Model):
     NotComplete = 0
     NotAdequate = 1
@@ -27,8 +26,29 @@ class StatusTable(models.Model):
     ExceedsAdequacy = 3
     Great = 4
 
+class Goals(models.Model):
 
-class GoalCurrency(models.Model):
-    Non_Current_Goal = 0
-    Current_Goal = 1
-    Future_Goal = 2
+    class GoalCurrency(models.IntegerChoices):
+        Completed_Goal = 0, _('Completed Goal')
+        Current_Goal = 1, _('Current Goal')
+        Future_Goal = 2, _('Future Goal')
+
+    class GoalStatus(models.IntegerChoices):
+        NotComplete = 0, _('NotCompletedGoal')
+        NotAdequate = 1, _('NotAdequate')
+        Adequate = 2, _('Adequate')
+        ExceedsAdequacy = 3, _('ExceedsAdequacy')
+        Great = 4, _('Great')
+
+    id = models.IntegerField(primary_key=True)
+    goal = models.CharField(max_length=400, default=None)
+    userforgoal = models.ForeignKey(User, on_delete= models.CASCADE, default=None)
+    statusofgoal = models.IntegerField(
+        choices=GoalStatus.choices,
+        default=GoalStatus.NotComplete
+    )
+    notesforgoal = models.CharField(max_length=400, default=None)
+    goalcurrency = models.IntegerField(
+        choices=GoalCurrency.choices,
+        default=GoalCurrency.Future_Goal
+    )
