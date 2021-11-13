@@ -20,6 +20,33 @@ class GetGoals(View):
     def get(self, request):
         return render(request, "goals.html", get_goal_data())
 
+class AddGoalView(View):
+    def get(self, request):
+        return render(request, "add_goal.html", get_patients())
+
+    def post(self, request):
+
+        mygoalinput = request.POST["goalinput"]
+        mygoalnotes = request.POST["goalnotes"]
+        mypatient = request.POST["patient"]
+        mygoalcurrency = request.POST["goalcurrency"]
+        mygoalcompletionstatus = request.POST["goalcompletionstatus"]
+
+        if mygoalinput == '':
+            return render(request, "add_goal.html", {'message': 'Goal input cannot be nothing'})
+        if mygoalnotes == '':
+            return render(request, "add_goal.html", {'message': 'Goal notes cannot be nothing'})
+        if mypatient == '':
+            return render(request, "add_goal.html", {'message': 'Patient cannot be nothing'})
+        if mygoalcurrency == '':
+            return render(request, "add_goal.html", {'message': 'Goal Currency cannot be nothing'})
+        if mygoalcompletionstatus == '':
+            return render(request, "add_goal.html", {'message': 'Goal CompletionStatus cannot be nothing'})
+
+
+
+
+
 
 class Login(View):
     def get(self, request):
@@ -63,6 +90,13 @@ def get_admin_template_data():
 def get_goal_data():
     return {
         "Goals": list(Goals.objects.all())
+    }
+
+
+
+def get_patients():
+    return {
+        "Patients": User.objects.filter(user_type__in=['2'])
     }
 
 class HomeInstructor(View):

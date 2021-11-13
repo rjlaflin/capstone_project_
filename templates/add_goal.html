@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  		<style>
+       div {
+       		margin-left: auto;
+  			margin-right: auto;
+       		width:60%;
+       		border-width:2px;
+            border-style:solid;
+            border-color: #53ca4e;
+       }
+       span {
+           color: #40acf1;
+           font-size: 20px
+        }
+        .AddGoalLabelColumn{
+           color: #40acf1;
+           width: 40%;
+           text-align: right;
+        }
+        .AddGoalValueColumn{
+           width: 60%;
+           text-align: left;
+        }
+        .TableHeaderGoalColumn{
+           width: 70%;
+        }
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+
+            table-layout: fixed;
+            margin-left: auto;
+  			margin-right: auto;
+        }
+
+    </style>
+  </head>
+  <body>
+  	<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    <div class="FormWrapper" id="AddGoalFormWrapper">
+      <form action="/course/" method="post"> {% csrf_token %}
+        <datalist id="GoalCurrencyOptions">
+        	<option>Completed Goal</option>
+            <option>Current Goal</option>
+            <option>Future Goal</option>
+        </datalist>
+        <datalist id="GoalCompletionStatusOptions">
+        	<option>Not Completed Goal</option>
+            <option>Not Adequate</option>
+            <option>Adequate</option>
+            <option>Exceeds Adequacy</option>
+            <option>Great</option>
+        </datalist>
+        <datalist id="ExistingPatientsOptions">
+            {% for i in Patients %}
+                <option>{{ i.name }}</option>
+            {% endfor %}
+
+        </datalist>
+        <table>
+          <tr>
+            <td class="AddGoalLabelColumn" id="AddGoalGoalLabelColumn">
+              <label for="AddGoalGoalInput">Goal: </label>
+            </td>
+            <td class="AddGoalValueColumn" id="AddGoalGoalValueColumn">
+              <input class="AddGoalInput" id="AddGoalGoalInput" type="text" placeholder="Write Out Goal Here" maxlength=400 name="goalinput" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="AddGoalLabelColumn" id="AddGoalNotesLabelColumn">
+              <label for="AddGoalNotesInput">Notes: </label>
+            </td>
+            <td class="AddGoalValueColumn" id="AddGoalNotesValueColumn">
+              <input class="AddGoalInput" id="AddGoalNotesInput" type="text" placeholder="Add Notes Here" maxlength=400 name="goalnotes" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="AddGoalLabelColumn" id="AddGoalPatientLabelColumn">
+              <label for="AddGoalPatient">Patient: </label>
+            </td>
+            <td class="AddGoalValueColumn" id="AddGoalPatientValueColumn">
+              <input type="text" list="ExistingPatientsOptions" id="AddGoalPatient" name="patient" autocomplete="off" placeholder="Select Patient" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="AddGoalLabelColumn" id="AddGoalGoalCurrencyLabelColumn">
+              <label for="AddGoalGoalCurrency">Goal Currency: </label>
+            </td>
+            <td class="AddGoalValueColumn" id="AddGoalGoalCurrencyValueColumn">
+              <input type="text" list="GoalCurrencyOptions" id="AddGoalGoalCurrency" name="goalcurrency" autocomplete="off" placeholder="Select Goal Currency" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="AddGoalLabelColumn" id="AddGoalGoalCompletionStatusLabelColumn">
+              <label for="AddGoalGoalCompletionStatus">Completion Status: </label>
+            </td>
+            <td class="AddGoalValueColumn" id="AddGoalGoalCompletionStatusValueColumn">
+              <input type="text" list="GoalCompletionStatusOptions" id="AddGoalGoalCompletionStatus" name="goalcompletionstatus" autocomplete="off" placeholder="Select Completion Status" required>
+            </td>
+          </tr>
+        </table>
+        <button type="submit" name="AddGoalButton" class="AddGoalButton">Save</button>
+      </form>
+    </div>
+  </body>
+</html>
+
+
