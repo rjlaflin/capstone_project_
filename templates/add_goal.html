@@ -42,7 +42,7 @@
   <body>
   	<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
     <div class="FormWrapper" id="AddGoalFormWrapper">
-      <form action="/course/" method="post"> {% csrf_token %}
+      <form method="post"> {% csrf_token %}
         <datalist id="GoalCurrencyOptions">
         	<option>Completed Goal</option>
             <option>Current Goal</option>
@@ -57,7 +57,7 @@
         </datalist>
         <datalist id="ExistingPatientsOptions">
             {% for i in Patients %}
-                <option>{{ i.name }}</option>
+                <option>{{ i.unique_id }}</option>
             {% endfor %}
 
         </datalist>
@@ -104,6 +104,9 @@
           </tr>
         </table>
         <button type="submit" name="AddGoalButton" class="AddGoalButton">Save</button>
+        <div>
+            <p id="AddGoal-ErrorMessage" class="error-message">{{ message }}</p>
+        </div>
       </form>
     </div>
   </body>

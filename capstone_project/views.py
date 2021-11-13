@@ -22,27 +22,61 @@ class GetGoals(View):
 
 class AddGoalView(View):
     def get(self, request):
-        return render(request, "add_goal.html", get_patients())
+        return render(request, "add_goal.html", get_patients(''))
 
     def post(self, request):
 
-        mygoalinput = request.POST["goalinput"]
-        mygoalnotes = request.POST["goalnotes"]
-        mypatient = request.POST["patient"]
-        mygoalcurrency = request.POST["goalcurrency"]
-        mygoalcompletionstatus = request.POST["goalcompletionstatus"]
+        validgoal = ValidateGoalInput(request.POST["goalinput"])
+        validgoalnotes = ValidateGoalNotes(request.POST["goalnotes"])
+        validpatient = ValidatePatient(request.POST["patient"])
+        validgoalcurrency = ValidateGoalCurrency(request.POST["goalcurrency"])
+        validgoalcompletionstatus = ValidateGoalCompletionStatus(request.POST["goalcompletionstatus"])
 
-        if mygoalinput == '':
-            return render(request, "add_goal.html", {'message': 'Goal input cannot be nothing'})
-        if mygoalnotes == '':
-            return render(request, "add_goal.html", {'message': 'Goal notes cannot be nothing'})
-        if mypatient == '':
-            return render(request, "add_goal.html", {'message': 'Patient cannot be nothing'})
-        if mygoalcurrency == '':
-            return render(request, "add_goal.html", {'message': 'Goal Currency cannot be nothing'})
-        if mygoalcompletionstatus == '':
-            return render(request, "add_goal.html", {'message': 'Goal CompletionStatus cannot be nothing'})
+        if not validgoal:
+            return render(request, "add_goal.html", get_patients('Error with Adding Goal'))
+        if not validgoalnotes:
+            return render(request, "add_goal.html", get_patients('Error with Goal Notes'))
+        if not validpatient:
+            return render(request, "add_goal.html", get_patients('Pataient cannot be nothing'), {'message': 'Patient cannot be nothing'})
+        if not validgoalcurrency:
+            return render(request, "add_goal.html", get_patients('Goal currency cannot be nothing'))
+        if not validgoalcompletionstatus:
+            return render(request, "add_goal.html", get_patients('Goal CompletionStatus cannot be nothing'))
 
+
+
+        return render(request, "goals.html", get_goal_data(), {'message': 'Successfully Added Goal to Database'})
+
+def ValidateGoalInput(input):
+    if input is None:
+        return False
+    elif input == 'as':
+        return False
+    else:
+        return True
+
+def ValidateGoalNotes(input):
+    if input is None:
+        return False
+    elif input == '':
+        return False
+    else:
+        return True
+
+def ValidatePatient(input):
+    validuser = User.objects.filter(unique_id__in=input)
+    if validuser is None:
+        return False
+    else:
+        return validuser
+
+def ValidateGoalCurrency(input):
+    if input is None:
+        return False
+    elif input is
+
+def ValidateGoalCompletionStatus(input):
+    return True
 
 
 
@@ -94,9 +128,10 @@ def get_goal_data():
 
 
 
-def get_patients():
+def get_patients(input):
     return {
-        "Patients": User.objects.filter(user_type__in=['2'])
+        "Patients": User.objects.filter(user_type__in=['2']),
+        "message": input
     }
 
 class HomeInstructor(View):
