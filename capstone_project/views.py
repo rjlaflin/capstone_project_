@@ -6,6 +6,7 @@ from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
+
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
@@ -19,6 +20,125 @@ class Information(View):
 class GetGoals(View):
     def get(self, request):
         return render(request, "goals.html", get_goal_data())
+
+    def post(self, request):
+
+        idforgoal = request.POST['GoalId']
+
+        if not 'currentgoalid' in request.session or not request.session['currentgoalid']:
+            request.session['currentgoalid'] = idforgoal
+        else:
+            request.session['currentgoalid'] = idforgoal
+
+        print(request.session['currentgoalid'])
+
+        return redirect("edit_goal.html")
+
+def get_specific_goal_data(goalid, editgoalmessage):
+    return{
+        "thisgoal": Goals.objects.get(id=goalid),
+        "message": editgoalmessage
+    }
+
+class AddGoalView(View):
+    def get(self, request):
+        return render(request, "add_goal.html", get_patients(''))
+
+    def post(self, request):
+
+        validgoal = ValidateGoalInput(request.POST["goalinput"])
+        validgoalnotes = ValidateGoalNotes(request.POST["goalnotes"])
+        validpatient = ValidatePatient(request.POST["patient"])
+        validgoalcurrency = ValidateGoalCurrency(request.POST["goalcurrency"])
+        validgoalcompletionstatus = ValidateGoalCompletionStatus(request.POST["goalcompletionstatus"])
+
+        if not validgoal:
+            return render(request, "add_goal.html", get_patients('Error with Adding Goal'))
+        if not validgoalnotes:
+            return render(request, "add_goal.html", get_patients('Error with Goal Notes'))
+        if not validpatient:
+            return render(request, "add_goal.html", get_patients('Error with selecting Patient'))
+        if not validgoalcurrency:
+            return render(request, "add_goal.html", get_patients('Error with selecting Goal Currency'))
+        if not validgoalcompletionstatus:
+            return render(request, "add_goal.html", get_patients('Error with adding Goal Completion Status'))
+
+        try:
+            user2 = User(User.objects.get(unique_id=request.POST['patient']).id)
+            id1 = Goals.objects.all().count()
+
+            a = Goals.objects.create(id=id1, goal=validgoal, notesforgoal=validgoalnotes,userforgoal=user2, goalcurrency=validgoalcurrency, statusofgoal=validgoalcompletionstatus)
+            a.save()
+
+        except:
+            return render(request, "add_goal.html", get_patients('Error adding goal to the database. Try filling out the form again.'))
+
+        return redirect("goals.html", get_goal_data())
+
+
+
+
+def ValidateGoalInput(input):
+    if input is None:
+        return False
+    elif input == '':
+        return False
+    elif len(input) > 400:
+        return False
+    else:
+        return input
+
+def ValidateGoalNotes(input):
+    if input is None:
+        return False
+    elif input == '':
+        return False
+    else:
+        return input
+
+def ValidatePatient(input):
+    validuser = User.objects.filter(unique_id=input)
+    if validuser is None:
+        return False
+    else:
+        myuser = User.objects.get(unique_id=input).user_type
+        if myuser != 2:
+            return False
+        else:
+            return True
+
+def ValidateGoalCurrency(input):
+    if input is None:
+        return False
+    else:
+        if input == 'Completed Goal':
+            return '0'
+        elif input == 'Current Goal':
+            return '1'
+        elif input == 'Future Goal':
+            return '2'
+        else:
+            return False
+
+def ValidateGoalCompletionStatus(input):
+    if input is None:
+        return False
+    else:
+        if input == 'Not Completed Goal':
+            return '0'
+        elif input == 'Not Adequate':
+            return '1'
+        elif input == 'Adequate':
+            return '2'
+        elif input == 'Exceeds Adequacy':
+            return '3'
+        elif input == 'Great':
+            return '4'
+        else:
+            return False
+
+
+
 
 
 class Login(View):
@@ -54,6 +174,50 @@ class HomeSupervisor(View):
     def post(self,request):
         pass
 
+class EditGoalView(View):
+    def get(self, request):
+
+        return render(request, "edit_goal.html", get_specific_goal_data(request.session['currentgoalid'], ''))
+    def post(self, request):
+
+        validgoalinput = ValidateGoalInput(request.POST['goalinput'])
+        validgoalnotes = ValidateGoalNotes(request.POST['goalnotes'])
+        validgoalcurrency = ValidateGoalCurrency(request.POST['goalcurrency'])
+        validgoalid = ValidateGoalId(request.POST['goalid'])
+        validgoalstatus = ValidateGoalCompletionStatus(request.POST['goalcompletionstatus'])
+
+        if not validgoalid:
+            return redirect("goals.html", get_goal_data(), {'message':'Invalid Goal Id'})
+        if not validgoalinput:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal input was not valid'))
+        if not validgoalnotes:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal notes input was not valid'))
+        if not validgoalcurrency:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Currency selection input was not valid'))
+        if not validgoalstatus:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Status Selected was not valid'))
+
+        GoalUser = Goals.objects.get(id=request.POST['goalid']).userforgoal
+
+        UpdatedGoal = Goals(request.POST['goalid'])
+        UpdatedGoal.goal = request.POST['goalinput']
+        UpdatedGoal.notesforgoal = request.POST['goalnotes']
+        UpdatedGoal.userforgoal = GoalUser
+        UpdatedGoal.goalcurrency = validgoalcurrency
+        UpdatedGoal.statusofgoal = validgoalstatus
+
+        UpdatedGoal.save()
+
+        return redirect("goals.html", get_goal_data(), {'message':'Successfully edited goal.'})
+
+def ValidateGoalId(input):
+    ThisGoal = Goals.objects.get(id=input)
+    if ThisGoal is not None:
+        return True
+    else:
+        return False
+
+
 def get_admin_template_data():
     return {
         "User": list(User.objects.all()),
@@ -63,6 +227,14 @@ def get_admin_template_data():
 def get_goal_data():
     return {
         "Goals": list(Goals.objects.all())
+    }
+
+
+
+def get_patients(input):
+    return {
+        "Patients": User.objects.filter(user_type__in=['2']),
+        "message": input
     }
 
 class HomeInstructor(View):

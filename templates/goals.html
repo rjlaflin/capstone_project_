@@ -37,9 +37,10 @@
     </div>
    <table id="CurrentGoalsTable">
        <thead>
-           <th class="TableHeaderGoalNumberColumn">User</th>
+            <th class="TableHeaderGoalNumberColumn">User</th>
             <th class="TableHeaderGoalColumn">Goal</th>
-            <th class="Table Header Status Column">Completion Status</th>
+            <th class="TableHeaderStatusColumn">Completion Status</th>
+            <th class="TableHeaderEditButtonColumn"></th>
         </thead>
        <tbody>
            {% for i in Goals %}
@@ -47,7 +48,25 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input name="GoalId" value="{{ i.id }}" readonly required hidden>
+                                <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -60,8 +79,8 @@
     <table id="CompletedGoalsTable">
        <thead>
            <th class="TableHeaderGoalNumberColumn">User</th>
-            <th class="TableHeaderGoalColumn">Goal</th>
-            <th class="TableHeaderStatusColumn">Completion Status</th>
+           <th class="TableHeaderGoalColumn">Goal</th>
+           <th class="TableHeaderStatusColumn">Completion Status</th>
         </thead>
        <tbody>
            {% for i in Goals %}
@@ -69,7 +88,25 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input name="GoalId" value="{{ i.id }}" readonly required hidden>
+                                <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -91,14 +128,37 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input name="GoalId" value="{{ i.id }}" readonly required hidden>
+                                <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}
         <tbody>
     </table>
     <br>
+    <div>
+        <p id="Goals-ErrorMessage" class="error-message">{{ message }}</p>
+    </div>
+    <a href="/add_goal.html">Add Goal</a>
     <a href="/">Back</a>
 
 </body>
 </html>
+
