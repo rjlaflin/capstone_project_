@@ -90,19 +90,22 @@ class AddUser(View):
         uname = request.POST["uname"]
         password = request.POST["pwd"]
         insurance_info = request.POST["ins"]
-        id1 = User.objects.all().count()
+        ids = list(User.objects.all().values_list('id', flat=True))
+        new_id = max(ids)
+        new_id = new_id + 1
+        print(new_id)
         if name != '' and uname != '' and password != '':
             if request.POST["role"] == 'Supervisor':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='0')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='0')
                 new_user.save()
             elif request.POST["role"] == 'Instructor':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='1')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='1')
                 new_user.save()
             elif request.POST["role"] == 'Patient':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='2')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='2')
                 new_user.save()
             else:
                 return render(request, "home.html")
