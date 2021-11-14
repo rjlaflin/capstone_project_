@@ -24,9 +24,15 @@ class GetGoals(View):
     def post(self, request):
 
         idforgoal = request.POST['GoalId']
-        mymessage = ''
 
-        return render(request, "edit_goal.html", get_specific_goal_data(idforgoal, mymessage))
+        if not 'currentgoalid' in request.session or not request.session['currentgoalid']:
+            request.session['currentgoalid'] = idforgoal
+        else:
+            request.session['currentgoalid'] = idforgoal
+
+        print(request.session['currentgoalid'])
+
+        return redirect("edit_goal.html")
 
 def get_specific_goal_data(goalid, editgoalmessage):
     return{
@@ -170,9 +176,47 @@ class HomeSupervisor(View):
 
 class EditGoalView(View):
     def get(self, request):
-        print(request)
+
+        return render(request, "edit_goal.html", get_specific_goal_data(request.session['currentgoalid'], ''))
     def post(self, request):
-        pass
+
+        validgoalinput = ValidateGoalInput(request.POST['goalinput'])
+        validgoalnotes = ValidateGoalNotes(request.POST['goalnotes'])
+        validgoalcurrency = ValidateGoalCurrency(request.POST['goalcurrency'])
+        validgoalid = ValidateGoalId(request.POST['goalid'])
+        validgoalstatus = ValidateGoalCompletionStatus(request.POST['goalcompletionstatus'])
+
+        if not validgoalid:
+            return redirect("goals.html", get_goal_data(), {'message':'Invalid Goal Id'})
+        if not validgoalinput:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal input was not valid'))
+        if not validgoalnotes:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal notes input was not valid'))
+        if not validgoalcurrency:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Currency selection input was not valid'))
+        if not validgoalstatus:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Status Selected was not valid'))
+
+        GoalUser = Goals.objects.get(id=request.POST['goalid']).userforgoal
+
+        UpdatedGoal = Goals(request.POST['goalid'])
+        UpdatedGoal.goal = request.POST['goalinput']
+        UpdatedGoal.notesforgoal = request.POST['goalnotes']
+        UpdatedGoal.userforgoal = GoalUser
+        UpdatedGoal.goalcurrency = validgoalcurrency
+        UpdatedGoal.statusofgoal = validgoalstatus
+
+        UpdatedGoal.save()
+
+        return redirect("goals.html", get_goal_data(), {'message':'Successfully edited goal.'})
+
+def ValidateGoalId(input):
+    ThisGoal = Goals.objects.get(id=input)
+    if ThisGoal is not None:
+        return True
+    else:
+        return False
+
 
 def get_admin_template_data():
     return {
