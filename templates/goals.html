@@ -48,7 +48,19 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
                         <td>
                             <form method="post">
                                 <input name="GoalId" value="{{ i.id }}" readonly required hidden>
@@ -76,7 +88,25 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input name="GoalId" value="{{ i.id }}" readonly required hidden>
+                                <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -98,7 +128,25 @@
                     <tr>
                         <td>{{ i.userforgoal.name }}</td>
                         <td>{{ i.goal }}</td>
-                        <td>{{ i.statusofgoal }}</td>
+                        <td>
+                            {% if i.statusofgoal == 0 %}
+                                Not Complete
+                            {% elif i.statusofgoal == 1 %}
+                                Not Adequate
+                            {% elif i.statusofgoal == 2 %}
+                                Adequate
+                            {% elif i.statusofgoal == 3 %}
+                                Exceeds Adequacy
+                            {% elif i.statusofgoal == 4 %}
+                                Great
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post">
+                                <input name="GoalId" value="{{ i.id }}" readonly required hidden>
+                                <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button>
+                            </form>
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}

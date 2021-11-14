@@ -90,9 +90,9 @@
               </td>
               <td class="EditGoalValueColumn" id="EditGoalCurrentCurrencyValueColumn">
                   <span id="EditGoalCurrentCurrencyValue">
-                      {% if thisgoal.goalcurrency == '0' %}
+                      {% if thisgoal.goalcurrency == 0 %}
                             CompletedGoal
-                      {% elif thisgoal.goalcurrency == '1' %}
+                      {% elif thisgoal.goalcurrency == 1 %}
                             Current Goal
                       {% else %}
                             Future Goal
@@ -114,13 +114,13 @@
               </td>
               <td class="EditGoalValueColumn" id="EditGoalCurrentGoalStatusValueColumn">
                   <span id="EditGoalCurrentGoalStatusValue">
-                      {% if thisgoal.statusofgoal == '0' %}
+                      {% if thisgoal.statusofgoal == 0 %}
                             Not Complete
-                      {% elif thisgoal.statusofgoal == '1' %}
+                      {% elif thisgoal.statusofgoal == 1 %}
                             Not Adequate
-                      {% elif thisgoal.statusofgoal == '2' %}
+                      {% elif thisgoal.statusofgoal == 2 %}
                             Adequate
-                      {% elif thisgoal.statusofgoal == '3' %}
+                      {% elif thisgoal.statusofgoal == 3 %}
                             Exceeds Adequacy
                       {% else %}
                             Great
