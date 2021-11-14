@@ -112,3 +112,4 @@ class AddUser(View):
 
         return render(request, "home_Supervisor.html")
 
+
