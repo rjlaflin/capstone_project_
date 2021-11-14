@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  		<style>
+       .FormWrapper {
+       		margin-left: auto;
+  			margin-right: auto;
+       		width:60%;
+       		border-width:2px;
+            border-style:solid;
+            border-color: #53ca4e;
+       }
+       input{
+            width: 80%;
+            padding: 0px;
+            margin: 0;
+       }
+       span {
+           color: #40acf1;
+           font-size: 16px
+        }
+        .EditGoalLabelColumn{
+           color: #40acf1;
+           width: 40%;
+           text-align: right;
+        }
+        .EditGoalValueColumn{
+           width: 60%;
+           text-align: left;
+        }
+        .TableHeaderGoalColumn{
+           width: 70%;
+        }
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+
+            table-layout: fixed;
+            margin-left: auto;
+  			margin-right: auto;
+        }
+
+    </style>
+  </head>
+  <body>
+  	<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    <div class="FormWrapper" id="EditGoalFormWrapper">
+      <form method="post"> {% csrf_token %}
+        <datalist id="GoalCurrencyOptions">
+        	<option>Completed Goal</option>
+            <option>Current Goal</option>
+            <option>Future Goal</option>
+        </datalist>
+        <datalist id="GoalCompletionStatusOptions">
+        	<option>Not Completed Goal</option>
+            <option>Not Adequate</option>
+            <option>Adequate</option>
+            <option>Exceeds Adequacy</option>
+            <option>Great</option>
+        </datalist>
+        <div class="HeaderWrapper" id="EditGoalHeaderWrapper">
+        	<h1>{{ thisgoal.userforgoal.name }}'s Goal</h1>
+        </div>
+        <table>
+          <tr>
+            <td class="EditGoalLabelColumn" id="EditGoalLabelColumn">
+              <label for="EditGoalGoalInput">Goal: </label>
+            </td>
+            <td class="EditGoalValueColumn" id="EditGoalGoalValueColumn">
+              <input class="EditGoalInput" id="EditGoalGoalInput" type="text" value="{{ thisgoal.goal }}" maxlength=400 name="goalinput" required>
+            </td>
+          </tr>
+          <tr>
+            <td class="EditGoalLabelColumn" id="EditGoalNotesLabelColumn">
+              <label for="EditGoalNotesInput">Notes: </label>
+            </td>
+            <td class="EditGoalValueColumn" id="EditGoalNotesValueColumn">
+              <input class="EditGoalInput" id="EditGoalNotesInput" type="text" value="{{ thisgoal.notesforgoal }}" maxlength=400 name="goalnotes" required>
+            </td>
+          </tr>
+          <tr>
+              <td class="EditGoalLabelColumn" id="EditGoalCurrentCurrencyLabelColumn">
+                  <span id="EditGoalCurrentCurrencyLabel">Current Goal Currency:</span>
+              </td>
+              <td class="EditGoalValueColumn" id="EditGoalCurrentCurrencyValueColumn">
+                  <span id="EditGoalCurrentCurrencyValue">
+                      {% if thisgoal.goalcurrency == '0' %}
+                            CompletedGoal
+                      {% elif thisgoal.goalcurrency == '1' %}
+                            Current Goal
+                      {% else %}
+                            Future Goal
+                      {% endif %}
+                      </span>
+              </td>
+          </tr>
+          <tr>
+            <td class="EditGoalLabelColumn" id="EditGoalGoalCurrencyLabelColumn">
+              <label for="EditGoalGoalCurrency">New Goal Currency: </label>
+            </td>
+            <td class="EditGoalValueColumn" id="EditGoalGoalCurrencyValueColumn">
+              <input type="text" list="GoalCurrencyOptions" id="EditGoalGoalCurrency" name="goalcurrency" autocomplete="off" placeholder="Select Goal Currency" required>
+            </td>
+          </tr>
+          <tr>
+              <td class="EditGoalLabelColumn" id="EditGoalCurrentGoalStatusLabelColumn">
+                  <span id="EditGoalCurrentGoalStatusLabel">Current Goal Completion Status:</span>
+              </td>
+              <td class="EditGoalValueColumn" id="EditGoalCurrentGoalStatusValueColumn">
+                  <span id="EditGoalCurrentGoalStatusValue">
+                      {% if thisgoal.statusofgoal == '0' %}
+                            Not Complete
+                      {% elif thisgoal.statusofgoal == '1' %}
+                            Not Adequate
+                      {% elif thisgoal.statusofgoal == '2' %}
+                            Adequate
+                      {% elif thisgoal.statusofgoal == '3' %}
+                            Exceeds Adequacy
+                      {% else %}
+                            Great
+                      {% endif %}
+                  </span>
+              </td>
+          </tr>
+          <tr>
+            <td class="EditGoalLabelColumn" id="EditGoalGoalCompletionStatusLabelColumn">
+              <label for="EditGoalGoalCompletionStatus">Completion Status: </label>
+            </td>
+            <td class="EditGoalValueColumn" id="EditGoalGoalCompletionStatusValueColumn">
+              <input type="text" list="GoalCompletionStatusOptions" id="EditGoalGoalCompletionStatus" name="goalcompletionstatus" autocomplete="off" placeholder="Select Completion Status" required>
+            </td>
+          </tr>
+        </table>
+        <button type="submit" name="UpdateGoalButton" class="UpdateGoalButton">Update</button>
+        <div>
+            <p id="EditGoal-ErrorMessage" class="error-message">{{ message }}</p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+
+

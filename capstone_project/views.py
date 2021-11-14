@@ -6,6 +6,7 @@ from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
+
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
@@ -19,6 +20,19 @@ class Information(View):
 class GetGoals(View):
     def get(self, request):
         return render(request, "goals.html", get_goal_data())
+
+    def post(self, request):
+
+        idforgoal = request.POST['GoalId']
+        mymessage = ''
+
+        return render(request, "edit_goal.html", get_specific_goal_data(idforgoal, mymessage))
+
+def get_specific_goal_data(goalid, editgoalmessage):
+    return{
+        "thisgoal": Goals.objects.get(id=goalid),
+        "message": editgoalmessage
+    }
 
 class AddGoalView(View):
     def get(self, request):
@@ -53,7 +67,10 @@ class AddGoalView(View):
         except:
             return render(request, "add_goal.html", get_patients('Error adding goal to the database. Try filling out the form again.'))
 
-        return render(request, "goals.html", get_goal_data())
+        return redirect("goals.html", get_goal_data())
+
+
+
 
 def ValidateGoalInput(input):
     if input is None:
@@ -149,6 +166,12 @@ class HomeSupervisor(View):
         return render(request, "home_Supervisor.html", get_admin_template_data())
 
     def post(self,request):
+        pass
+
+class EditGoalView(View):
+    def get(self, request):
+        print(request)
+    def post(self, request):
         pass
 
 def get_admin_template_data():
