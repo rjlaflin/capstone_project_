@@ -6,6 +6,7 @@ from django.http import QueryDict, HttpRequest, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
+
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
@@ -19,6 +20,25 @@ class Information(View):
 class GetGoals(View):
     def get(self, request):
         return render(request, "goals.html", get_goal_data())
+
+    def post(self, request):
+
+        idforgoal = request.POST['GoalId']
+
+        if not 'currentgoalid' in request.session or not request.session['currentgoalid']:
+            request.session['currentgoalid'] = idforgoal
+        else:
+            request.session['currentgoalid'] = idforgoal
+
+        print(request.session['currentgoalid'])
+
+        return redirect("edit_goal.html")
+
+def get_specific_goal_data(goalid, editgoalmessage):
+    return{
+        "thisgoal": Goals.objects.get(id=goalid),
+        "message": editgoalmessage
+    }
 
 class AddGoalView(View):
     def get(self, request):
@@ -53,7 +73,10 @@ class AddGoalView(View):
         except:
             return render(request, "add_goal.html", get_patients('Error adding goal to the database. Try filling out the form again.'))
 
-        return render(request, "goals.html", get_goal_data())
+        return redirect("goals.html", get_goal_data())
+
+
+
 
 def ValidateGoalInput(input):
     if input is None:
@@ -145,11 +168,54 @@ class Login(View):
 
 class HomeSupervisor(View):
     def get(self, request):
-        all_users = User.objects.all()
-        return render(request, "home_Supervisor.html", {"all_users": all_users})
 
-    def post(self, request):
+        return render(request, "home_Supervisor.html", get_admin_template_data())
+
+    def post(self,request):
         pass
+
+class EditGoalView(View):
+    def get(self, request):
+
+        return render(request, "edit_goal.html", get_specific_goal_data(request.session['currentgoalid'], ''))
+    def post(self, request):
+
+        validgoalinput = ValidateGoalInput(request.POST['goalinput'])
+        validgoalnotes = ValidateGoalNotes(request.POST['goalnotes'])
+        validgoalcurrency = ValidateGoalCurrency(request.POST['goalcurrency'])
+        validgoalid = ValidateGoalId(request.POST['goalid'])
+        validgoalstatus = ValidateGoalCompletionStatus(request.POST['goalcompletionstatus'])
+
+        if not validgoalid:
+            return redirect("goals.html", get_goal_data(), {'message':'Invalid Goal Id'})
+        if not validgoalinput:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal input was not valid'))
+        if not validgoalnotes:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal notes input was not valid'))
+        if not validgoalcurrency:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Currency selection input was not valid'))
+        if not validgoalstatus:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Status Selected was not valid'))
+
+        GoalUser = Goals.objects.get(id=request.POST['goalid']).userforgoal
+
+        UpdatedGoal = Goals(request.POST['goalid'])
+        UpdatedGoal.goal = request.POST['goalinput']
+        UpdatedGoal.notesforgoal = request.POST['goalnotes']
+        UpdatedGoal.userforgoal = GoalUser
+        UpdatedGoal.goalcurrency = validgoalcurrency
+        UpdatedGoal.statusofgoal = validgoalstatus
+
+        UpdatedGoal.save()
+
+        return redirect("goals.html", get_goal_data(), {'message':'Successfully edited goal.'})
+
+def ValidateGoalId(input):
+    ThisGoal = Goals.objects.get(id=input)
+    if ThisGoal is not None:
+        return True
+    else:
+        return False
 
 
 def get_admin_template_data():
@@ -196,34 +262,22 @@ class AddUser(View):
         uname = request.POST["uname"]
         password = request.POST["pwd"]
         insurance_info = request.POST["ins"]
-        ids = list(User.objects.all().values_list('id', flat=True))
-        new_id = max(ids)
-        new_id = new_id + 1
-        print(new_id)
+        id1 = User.objects.all().count()
         if name != '' and uname != '' and password != '':
             if request.POST["role"] == 'Supervisor':
-                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
-                                insurance_information=insurance_info, user_type='0')
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='0')
                 new_user.save()
             elif request.POST["role"] == 'Instructor':
-                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
-                                insurance_information=insurance_info, user_type='1')
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='1')
                 new_user.save()
             elif request.POST["role"] == 'Patient':
-                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
-                                insurance_information=insurance_info, user_type='2')
+                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
+                                 insurance_information=insurance_info, user_type='2')
                 new_user.save()
             else:
                 return render(request, "home.html")
 
-        all_users = User.objects.all()
-        return render(request, "home_Supervisor.html", {"all_users": all_users})
+        return render(request, "home_Supervisor.html")
 
-
-class UserStatus(View):
-    def get(self, request):
-        user = User.objects.get(unique_id=request.session["uname"])
-        return render(request, "user_status.html", {"user_info": user})
-
-    def post(self, request):
-        pass
