@@ -1,8 +1,23 @@
-body, html {
-    text-align: center;
-    background-color: lightgreen;
+span {
+    color: #40acf1;
+    font-size: 20px
 }
-
-.home_supervisor {
-    color: purple;
+.TableHeaderGoalNumberColumn{
+    width: 10%;
+}
+.TableHeaderGoalColumn{
+    width: 70%;
+}
+body {
+    text-align: center;
+}
+table {
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
 }

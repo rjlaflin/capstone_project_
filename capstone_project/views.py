@@ -145,11 +145,12 @@ class Login(View):
 
 class HomeSupervisor(View):
     def get(self, request):
+        all_users = User.objects.all()
+        return render(request, "home_Supervisor.html", {"all_users": all_users})
 
-        return render(request, "home_Supervisor.html", get_admin_template_data())
-
-    def post(self,request):
+    def post(self, request):
         pass
+
 
 def get_admin_template_data():
     return {
@@ -215,6 +216,14 @@ class AddUser(View):
             else:
                 return render(request, "home.html")
 
-        return render(request, "home_Supervisor.html")
+        all_users = User.objects.all()
+        return render(request, "home_Supervisor.html", {"all_users": all_users})
 
 
+class UserStatus(View):
+    def get(self, request):
+        user = User.objects.get(unique_id=request.session["uname"])
+        return render(request, "user_status.html", {"user_info": user})
+
+    def post(self, request):
+        pass
