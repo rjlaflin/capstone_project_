@@ -52,13 +52,13 @@
             text-align: center;
         }
         span {
-            color: #40acf1;
+            color: black;
             font-size: 20px
         }
         table {
             margin-left: auto;
             margin-right: auto;
-            width: 50%;
+            width: 80%;
             border: 1px solid black;
             border-collapse: collapse;
             table-layout: auto;
@@ -89,20 +89,15 @@
            <th class="TableHeaderGoalColumn">User type</th>
        </thead>
        <tbody>
-
-
-                    <tr>
-                        <td>{{ user.name }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
-                        <td>{{ user.id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
-                        <td>{{ user.unique_id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
-                        <td>{{ user.pwd}}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
-                        <td>{{ user.user_type }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
-                    </tr>
-
-
+            <tr>
+                <td>{{ user.name }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.unique_id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.pwd}}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.user_type }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+            </tr>
         </tbody>
     </table>
-        {{ user.name }}
     <br><br>
     <a href="/home_Supervisor.html">Back</a>
 </body>
