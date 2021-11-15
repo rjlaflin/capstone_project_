@@ -1,4 +1,3 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,135 +46,59 @@
     kekE5xRPSJKUuitibEgsMkWBIAIBIAIBIAIBIAIBIAIBIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     AAAAAAAAAAAAAAAAAAAAP//Z">
     <meta charset="UTF-8">
-    <title>Supervisor</title>
+    <title>User Information</title>
     <style>
-        html {
+        body, html {
             text-align: center;
         }
-        body {
-            background-image: url("https://nationaldaycalendar.com/wp-content/uploads/2019/06/sunrise-768x768.jpg");
-            background-position: center;
-            background-color: #40acf1;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
         span {
-    color: black;
-    font-size: 20px
-}
-.TableHeaderGoalNumberColumn{
+            color: black;
+            font-size: 20px
+        }
+        table {
+            margin-left: auto;
+            margin-right: auto;
+            width: 80%;
+            border: 1px solid black;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+        th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .TableHeaderGoalNumberColumn{
     width: 50%;
 }
 .TableHeaderGoalColumn{
-    width: 25%;
-}
-
-table {
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-    border: 1px solid black;
-    border-collapse: collapse;
-    table-layout: auto;
-    background-color: white;
-}
-th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-button {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  /*optional*/
-  font-family: arial, sans-serif;
-  /*input has OS specific font-family*/
-  color: #069;
-  text-decoration: underline;
-  cursor: pointer;
+    width: 20%;
 }
     </style>
 </head>
 <body>
 <br><br>
-<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
-<h1>Supervisor Homepage</h1>
-   <br>
-   <div>
-       <span>Supervisors</span>
-   </div>
-   <table>
+    <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    <h1>User Information</h1>
+    <br><br>
+        <table>
        <thead>
-           <th class="TableHeaderGoalNumberColumn">Name</th>
+           <th class="TableHeaderGoalColumn">Name</th>
            <th class="TableHeaderGoalColumn">Id</th>
-           <th class="TableHeaderStatusColumn">Username</th>
+           <th class="TableHeaderGoalColumn">Username</th>
+           <th class="TableHeaderGoalColumn">Password</th>
+           <th class="TableHeaderGoalColumn">User type</th>
        </thead>
        <tbody>
-           {% for i in all_users %}
-                {% if i.user_type == 0 %}
-                    <tr>
-                        <td><a href="/response?name={{ i.name }}" style="text-decoration: none">{{ i.name }}</a></td>
-                        <td>{{ i.id }}</td>
-                        <td>{{ i.unique_id }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
+            <tr>
+                <td>{{ user.name }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.unique_id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.pwd}}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                <td>{{ user.user_type }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+            </tr>
         </tbody>
     </table>
-    <br>
-    <div>
-       <span>Staff</span>
-    </div>
-    <table>
-       <thead>
-           <th class="TableHeaderGoalNumberColumn">Name</th>
-           <th class="TableHeaderGoalColumn">Id</th>
-           <th class="TableHeaderStatusColumn">Username</th>
-        </thead>
-       <tbody>
-           {% for i in all_users %}
-                {% if i.user_type == 1 %}
-                    <tr>
-                        <td><a href="/response?name={{ i.name }}" style="text-decoration: none">{{ i.name }}</a></td>
-                        <td>{{ i.id }}</td>
-                        <td>{{ i.unique_id }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        <tbody>
-    </table>
-    <br>
-    <div>
-       <span>Patients</span>
-    </div>
-    <table>
-       <thead>
-           <th class="TableHeaderGoalNumberColumn">Name</th>
-           <th class="TableHeaderGoalColumn">Id</th>
-           <th class="TableHeaderStatusColumn">Username</th>
-        </thead>
-       <tbody>
-           {% for i in all_users %}
-                {% if i.user_type == 2 %}
-                    <tr>
-                        <td><a href="/response?name={{ i.name }}" style="text-decoration: none">{{ i.name }}</a></td>
-                        <td>{{ i.id }}</td>
-                        <td>{{ i.unique_id }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        <tbody>
-    </table>
-    <br>
-    <div>
-        <p id="Goals-ErrorMessage" class="error-message">{{ message }}</p>
-    </div>
-    <br>
-    <a href="/add_user.html">Add new user</a>
     <br><br>
-    <a href="/goals.html">Go To Goals</a>
-    <br><br>
-    <a href="/">Back</a>
-
+    <a href="/home_Supervisor.html">Back</a>
 </body>
 </html>
