@@ -46,86 +46,64 @@
     kekE5xRPSJKUuitibEgsMkWBIAIBIAIBIAIBIAIBIAIBIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     AAAAAAAAAAAAAAAAAAAAP//Z">
     <meta charset="UTF-8">
-    <title>Goal Tracker - Login</title>
+    <title>User Information</title>
     <style>
-        body {
+        body, html {
             text-align: center;
         }
-        h1 {
-            color: #53ca4e;
-            background-color: white;
-            width: 50%;
+        span {
+            color: #40acf1;
+            font-size: 20px
+        }
+        table {
             margin-left: auto;
-            margin-right: auto
-        }
-
-        form{
-            height: 100%
-        }
-
-        #Login-BodyWrapperContainer {
-            border: 3px solid dodgerblue;
+            margin-right: auto;
             width: 50%;
-            height: 100%;
-            margin-top: 5%;
-            margin-bottom: auto;
-            margin-left:auto;
-            margin-right:auto;
-            background-color: white
+            border: 1px solid black;
+            border-collapse: collapse;
+            table-layout: auto;
         }
-
-
-
-        p {
-            background-color: yellow;
+        th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
         }
-        .button {
-  display: inline-block;
-  padding: 15px 25px;
-  font-size: 24px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
+        .TableHeaderGoalNumberColumn{
+    width: 50%;
 }
-
-.button:hover {background-color: #3e8e41}
-
-.button:active {
-  background-color: #3e8e41;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
+.TableHeaderGoalColumn{
+    width: 20%;
 }
     </style>
 </head>
 <body>
-    <div id= "Login-BodyWrapperContainer" class = "container">
-        <div>
-            <h1>Log In</h1>
-            <form method="post"> {% csrf_token %}
-                <div class="username_password" id="LoginUserPassWrapper">
-                    <input id="Login-Username" class="form-field" type="text" placeholder="Enter email" name="uname" required>
-                    &#160 <!-- adds spaces -->
-                    &#160
-                    &#160
-                    <input id="Login-Password" class="form-field" type="password" placeholder="Enter password" name="psw" required>
-                    &#160
-                    &#160
-                    &#160
-                    <button class="button" type="submit">Log In</button>
-                </div>
-            </form>
-            <div>
-                <p id="Login-ErrorMessage" class="error-message">{{ message }}</p>
-            </div>
-        </div>
-        <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
-    </div>
+<br><br>
+    <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    <h1>User Information</h1>
+    <br><br>
+        <table>
+       <thead>
+           <th class="TableHeaderGoalColumn">Name</th>
+           <th class="TableHeaderGoalColumn">Id</th>
+           <th class="TableHeaderGoalColumn">Username</th>
+           <th class="TableHeaderGoalColumn">Password</th>
+           <th class="TableHeaderGoalColumn">User type</th>
+       </thead>
+       <tbody>
 
+
+                    <tr>
+                        <td>{{ user.name }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                        <td>{{ user.id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                        <td>{{ user.unique_id }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                        <td>{{ user.pwd}}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                        <td>{{ user.user_type }}  <button type="submit" name="EditGoalButton" class="EditGoalButton">Edit</button></td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+        {{ user.name }}
+    <br><br>
+    <a href="/home_Supervisor.html">Back</a>
 </body>
 </html>

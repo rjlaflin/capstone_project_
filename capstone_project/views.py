@@ -168,11 +168,15 @@ class Login(View):
 
 class HomeSupervisor(View):
     def get(self, request):
-
-        return render(request, "home_Supervisor.html", get_admin_template_data())
+        all_users = User.objects.all()
+        return render(request, "home_Supervisor.html", {"all_users": all_users})
 
     def post(self,request):
-        pass
+        user_name = request.POST["name"]
+        get_user = User.objects.get(name=user_name)
+        print(get_user)
+        return render(request, "user_status.html", {"user": get_user})
+
 
 class EditGoalView(View):
     def get(self, request):
@@ -242,7 +246,8 @@ class HomeInstructor(View):
         return render(request, "home_instructor.html")
 
     def post(self,request):
-        pass
+        get_user = request.POST[""]
+        return render(request, "home_instructor.html")
 
 
 class HomePatient(View):
@@ -262,22 +267,36 @@ class AddUser(View):
         uname = request.POST["uname"]
         password = request.POST["pwd"]
         insurance_info = request.POST["ins"]
-        id1 = User.objects.all().count()
+        ids = list(User.objects.all().values_list('id', flat=True))
+        new_id = max(ids)
+        new_id = new_id + 1
+        print(new_id)
         if name != '' and uname != '' and password != '':
             if request.POST["role"] == 'Supervisor':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='0')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='0')
                 new_user.save()
             elif request.POST["role"] == 'Instructor':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='1')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='1')
                 new_user.save()
             elif request.POST["role"] == 'Patient':
-                new_user = User(id=id1, name=name, unique_id=uname, pwd=password,
-                                 insurance_information=insurance_info, user_type='2')
+                new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
+                                insurance_information=insurance_info, user_type='2')
                 new_user.save()
             else:
                 return render(request, "home.html")
 
-        return render(request, "home_Supervisor.html")
+        all_users = User.objects.all()
+        return render(request, "home_Supervisor.html", {"all_users": all_users})
 
+
+class UserStatus(View):
+    def get(self, request):
+        print(request.GET["name"])
+        user_name = request.GET["name"]
+        user = User.objects.get(name=user_name)
+        return render(request, "user_status.html", {"user": user})
+
+    def post(self, request):
+        pass
