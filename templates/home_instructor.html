@@ -5,8 +5,16 @@
     <title>Instructor</title>
     <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
 </head>
-<body>
+<br>
     <h1>Instructor Page</h1>
+        <br>
+{#            <span>{{ user.id }}</span></br>#}
+            <span>Your Name: {{ user.name }}</span> </br></br>
+            <span><a href="/response?name={{ user.name }}" style="text-decoration: none">Edit your info</a></span></br>
+            <a href="/goals.html">Go To Goals</a>
+
+        </div>
+
     <br><br>
     <a href="/">Back</a>
     </body>

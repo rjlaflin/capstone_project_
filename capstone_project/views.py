@@ -243,7 +243,8 @@ def get_patients(input):
 
 class HomeInstructor(View):
     def get(self, request):
-        return render(request, "home_instructor.html")
+        user = User.objects.get(unique_id=request.session['uname'])
+        return render(request, "home_instructor.html", {"user": user})
 
     def post(self,request):
         get_user = request.POST[""]
