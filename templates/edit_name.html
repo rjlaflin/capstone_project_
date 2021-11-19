@@ -78,9 +78,23 @@ th, td {
 }
     </style>
 </head>
-    <title>Edit user</title>
+    <title>Edit Name</title>
 </head>
 <body>
+    <h1>Edit Name for {{ user.name }}</h1>
+    {{ message }}
+    <br><br>
 
+        Name : {{ user.name }}
+        <br><br>
+        <form method="post">
+        New name : <input type="text" name="name" value="{{ user.name }}">
+        <br><br>
+        <input type="submit" name="edit_field" value="Change name">
+        </form>
+
+
+    <br><br>
+    <a href="/">Back</a>
 </body>
 </html>

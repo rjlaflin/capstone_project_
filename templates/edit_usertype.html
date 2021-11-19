@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User Type</title>
+</head>
+<body>
+    <h1>Edit user type for {{ user.name }}</h1>
+    {{ message }}
+    <br><br>
+
+        User type : {{ user.user_type }}
+        <br><br>
+        <form method="post">
+        New user type: <input type="number" name="user_type" value="{{ user.user_type }}">
+        <br><br>
+        <input type="submit" name="edit_field" value="Change usertype">
+        </form>
+
+
+    <br><br>
+    <a href="/">Back</a>
+</body>
+</html>

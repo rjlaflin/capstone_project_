@@ -16,7 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from capstone_project.views import Home, Information, Login, HomeSupervisor, AddUser, HomeInstructor, HomePatient,\
-     GetGoals, AddGoalView, EditGoalView, UserStatus
+     GetGoals, AddGoalView, EditGoalView, UserStatus, EditName, UpdateSuccessful, EditUsername, EditPassword,\
+     EditUsertype, EditInsurance
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,5 +31,12 @@ urlpatterns = [
     path('goals.html', GetGoals.as_view()),
     path('add_goal.html', AddGoalView.as_view()),
     path('edit_goal.html', EditGoalView.as_view()),
-    path('response/', UserStatus.as_view()),
+    path('user_status/', UserStatus.as_view()),
+    path('user_status/edit_name', EditName.as_view()),
+    path('user_status/user_status.html', EditName.as_view()),
+    path('update_successful.html', UpdateSuccessful.as_view()),
+    path('user_status/edit_username', EditUsername.as_view()),
+    path('user_status/edit_password', EditPassword.as_view()),
+    path('user_status/edit_usertype', EditUsertype.as_view()),
+    path('user_status/edit_insurance', EditInsurance.as_view()),
 ]

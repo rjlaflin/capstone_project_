@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Username</title>
+</head>
+<body>
+    <h1>Edit Username for {{ user.name }}</h1>
+    {{ message }}
+    <br><br>
+
+        Username : {{ user.unique_id }}
+        <br><br>
+        <form method="post">
+        New username : <input type="text" name="user_name" value="{{ user.unique_id }}">
+        <br><br>
+        <input type="submit" name="edit_field" value="Change username">
+        </form>
+
+
+    <br><br>
+    <a href="/">Back</a>
+</body>
+</html>

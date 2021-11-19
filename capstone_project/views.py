@@ -169,13 +169,12 @@ class Login(View):
 class HomeSupervisor(View):
     def get(self, request):
         all_users = User.objects.all()
-        return render(request, "home_Supervisor.html", {"all_users": all_users})
+        cur_user = User.objects.get(unique_id=request.session["uname"])
+        print(cur_user.name)
+        return render(request, "home_Supervisor.html", {"all_users": all_users, "cur_user": cur_user})
 
-    def post(self,request):
-        user_name = request.POST["name"]
-        get_user = User.objects.get(name=user_name)
-        print(get_user)
-        return render(request, "user_status.html", {"user": get_user})
+    def post(self, request):
+        pass
 
 
 class EditGoalView(View):
@@ -293,10 +292,100 @@ class AddUser(View):
 
 class UserStatus(View):
     def get(self, request):
-        print(request.GET["name"])
-        user_name = request.GET["name"]
-        user = User.objects.get(name=user_name)
+        print(request)
+        user = User.objects.get(name=request.GET["name"])
         return render(request, "user_status.html", {"user": user})
+
+    def post(self, request):
+        print(request)
+        user = User.objects.get(name=request.GET["name"])
+        print(user.name)
+        if user is not None:
+            user.delete()
+            return redirect("/update_successful.html")
+        else:
+            return redirect("login.html")
+
+
+class EditName(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        return render(request, "edit_name.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.name = request.POST["name"]
+        print(request.POST["name"])
+        user.save()
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+
+class EditUsername(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        return render(request, "edit_username.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.unique_id = request.POST["user_name"]
+        #print(request.POST["name"])
+        user.save()
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+class EditPassword(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        return render(request, "edit_password.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.pwd = request.POST["user_pwd"]
+        #print(request.POST["name"])
+        user.save()
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+class EditUsertype(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        return render(request, "edit_usertype.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.user_type= request.POST["user_type"]
+        #print(request.POST["name"])
+        user.save()
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+class EditInsurance(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        return render(request, "edit_insurance.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.insurance_information = request.POST["user_insurance"]
+        #print(request.POST["name"])
+        user.save()
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+class UpdateSuccessful(View):
+    def get(self, request):
+        return render(request, "update_successful.html")
 
     def post(self, request):
         pass

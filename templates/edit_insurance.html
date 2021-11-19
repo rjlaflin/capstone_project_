@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Insurance</title>
+</head>
+<body>
+    <h1>Edit user type for {{ user.name }}</h1>
+    {{ message }}
+    <br><br>
+
+        User insurance : {{ user.insurance_information }}
+        <br><br>
+        <form method="post">
+        New username : <input type="text" name="user_insurance" value="{{ user.user_type }}">
+        <br><br>
+        <input type="submit" name="edit_field" value="Change usertype">
+        </form>
+
+
+    <br><br>
+    <a href="/home_Supervisor.html">Back</a>
+</body>
+</html>
