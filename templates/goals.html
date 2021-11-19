@@ -157,7 +157,13 @@
         <p id="Goals-ErrorMessage" class="error-message">{{ message }}</p>
     </div>
     <a href="/add_goal.html">Add Goal</a>
-    <a href="/home_Supervisor.html">Back</a>
+{#   {% if user.user_type == 1 %}#}
+{#    <a href="/home_instructor.html">Back</a>#}
+{#     {% endif %}#}
+{#    {% if user.user_type == 0 %}#}
+{#    <a href="/home_Supervisor.html">Back</a>#}
+{#     {% endif %}#}
+    <a href="/login.html">Log Out</a>
 
 </body>
 </html>
