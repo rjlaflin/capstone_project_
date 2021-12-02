@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+	<style>
+       #patientlabel {
+       	   margin-right: 0%;
+           text-align: right;
+       }
+       #AddGoalFormWrapper {
+       		margin-left: auto;
+  			margin-right: auto;
+       		width:60%;
+       		border-width:2px;
+            border-style:solid;
+            border-color: #53ca4e;
+       }
+       span {
+           color: #40acf1;
+           font-size: 20px
+        }
+        .SelectPatientLabelColumn{
+           color: #40acf1;
+           width: 40%;
+           text-align: right;
+        }
+        .SelectPatientValueColumn{
+           width: 60%;
+           text-align: left;
+        }
+        .TableHeaderGoalColumn{
+           width: 70%;
+        }
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+
+            table-layout: fixed;
+            margin-left: auto;
+  			margin-right: auto;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+    <div class="FormWrapper" id="AddGoalFormWrapper">
+
+      <div id="FilterPatientGoals" class="PageClarification">
+          Select a patient to see their goals
+      </div>
+      <form method="post"> {% csrf_token %}
+          <datalist id="ExistingPatientsOptions">
+              {% for i in Patients %}
+                  <option>{{ i.unique_id }}</option>
+              {% endfor %}
+
+          </datalist>
+          <table>
+              <tbody>
+                  <tr>
+                      <td class="SelectPatientLabelColumn" id="SelectPatientLabelColumn">
+                        <label id="patientlabel" for="ExistingPatientOptions">Patient: </label>
+                      </td>
+                      <td class="SelectPatientValueColumn" id="SelectPatientValueColumn">
+                        <input type="text" list="ExistingPatientsOptions" id="AddGoalPatient" name="patient" autocomplete="off" placeholder="Select Patient" required>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+
+          <button type="submit" name="UpdateGoalButton" class="UpdateGoalButton">View Patient's Goals</button>
+          <div>
+              <p id="EditGoal-ErrorMessage" class="error-message">{{ message }}</p>
+          </div>
+        </form>
+      </div>
+</body>
+
+</html>
