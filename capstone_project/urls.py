@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from capstone_project.views import Home, Information, Login, HomeSupervisor, AddUser, HomeInstructor, HomePatient,\
      GetGoals, AddGoalView, EditGoalView, UserStatus, EditName, UpdateSuccessful, EditUsername, EditPassword,\
-     EditUsertype, EditInsurance
+     EditUsertype, EditInsurance, GetIndividualsGoals, SelectPatientGoals, ViewSpecificPatient
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,4 +39,7 @@ urlpatterns = [
     path('user_status/edit_password', EditPassword.as_view()),
     path('user_status/edit_usertype', EditUsertype.as_view()),
     path('user_status/edit_insurance', EditInsurance.as_view()),
+    path('patient_goals_page.html', GetIndividualsGoals.as_view()),
+    path('select_patient_goal.html', SelectPatientGoals.as_view()),
+    path('view_specific_patient_goals.html', ViewSpecificPatient.as_view())
 ]

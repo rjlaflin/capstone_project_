@@ -11,11 +11,50 @@ class Home(View):
     def get(self, request):
         return render(request, "home.html")
 
-
 class Information(View):
     def get(self, request):
         return render(request, "info.html")
 
+
+class SelectPatientGoals(View):
+    def get(self, request):
+        user = User.objects.get(unique_id=request.session['uname'])
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        else:
+            return render(request, "select_patient_goal.html", get_patients(''))
+
+    def post(self, request):
+        idforgoal = request.POST['patient']
+
+        if not 'PatientToBeViewed' in request.session or not request.session['PatientToBeViewed']:
+            request.session['PatientToBeViewed'] = idforgoal
+        else:
+            request.session['PatientToBeViewed'] = idforgoal
+
+        print(request.session['PatientToBeViewed'])
+
+        return redirect("view_specific_patient_goals.html")
+
+class ViewSpecificPatient(View):
+    def get(self, request):
+        userinteger = request.session['PatientToBeViewed']
+        user = User.objects.get(unique_id=userinteger)
+        if user.user_type == 2:
+            return render(request, "view_specific_patient_goals.html", get_individual_goal_data(user))
+    def post(self):
+        pass
+
+class GetIndividualsGoals(View):
+    def get(self, request):
+        user = User.objects.get(unique_id=request.session['uname'])
+        print(user.user_type)
+        if user.user_type == 2:
+            return render(request, "patient_goals_page.html", get_individual_goal_data(user))
+        else:
+            return redirect("goals.html")
+    def post(self, request):
+        pass
 
 class GetGoals(View):
     def get(self, request):
@@ -232,6 +271,11 @@ def get_goal_data():
         "Goals": list(Goals.objects.all())
     }
 
+def get_individual_goal_data(ThisPatient):
+    return {
+
+        "Goals": Goals.objects.filter(userforgoal=ThisPatient)
+    }
 
 
 def get_patients(input):
