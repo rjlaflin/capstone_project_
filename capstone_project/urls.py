@@ -21,14 +21,14 @@ from capstone_project.views import Home, Information, Login, HomeSupervisor, Add
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login.html', Login.as_view()),
+    path('login.html', Login.as_view(), name='login'),
     path('', Home.as_view()),
     path('info.html', Information.as_view()),
-    path('home_Supervisor.html', HomeSupervisor.as_view()),
-    path('add_user.html', AddUser.as_view()),
+    path('home_Supervisor.html', HomeSupervisor.as_view(), name='SupervisorHome'),
+    path('add_user.html', AddUser.as_view(), name='addUser'),
     path('home_instructor.html', HomeInstructor.as_view()),
     path('home_patient.html', HomePatient.as_view()),
-    path('goals.html', GetGoals.as_view()),
+    path('goals.html', GetGoals.as_view(), name='goals'),
     path('add_goal.html', AddGoalView.as_view()),
     path('edit_goal.html', EditGoalView.as_view()),
     path('user_status/', UserStatus.as_view()),
