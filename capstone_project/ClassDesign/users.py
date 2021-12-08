@@ -98,7 +98,7 @@ class Users:
         if name is not None:
             user.name = name
 
-        """if phone is not None:
-            user.phone = phone"""
+        '''if phone is not None:
+            user.phone = phone'''
 
         user.save()

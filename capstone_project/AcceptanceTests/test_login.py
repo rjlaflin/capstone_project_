@@ -30,21 +30,21 @@ class TestLoginView(TestCase):
 
     def test_rejects_empty_username(self):
         resp = self.client.post(reverse('login'), {
-            'unique_id': '',
-            'pwd': 'verysecurepassword'
+            'uname': '',
+            'psw': 'verysecurepassword'
         })
 
-        error: LoginError = resp.context['error']
+        error: resp.context['error']
 
         self.assertIsNotNone(error, 'Did not return error message')
         self.assertTrue(error.place().username(), 'Did not return error with username')
-        self.assertEqual(error.message(), 'You must provide a username')
+        self.assertEqual(error.message(), 'Invalid name/password')
 
     def test_rejects_long_username(self):
         # Usernames may not be longer than 20 characters,
         # does not even ask the database
 
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': 'very_long_username_username_that_the_database_cannot_hold',
             'pwd': 'verysecurepassword',
         })
@@ -57,7 +57,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_no_such_username(self):
         # Username does not exist in the database
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': 'arodgers12',
             'pwd': 'password1',
         })
@@ -69,7 +69,7 @@ class TestLoginView(TestCase):
         self.assertEqual(error.message(), 'No such user')
 
     def test_rejects_empty_password(self):
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': self.long_user_username,
             'pwd': ''
         })
@@ -82,7 +82,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_short_password(self):
         # Passwords of less than or equal to 8 passwords are not valid
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': self.long_user_username,
             'pwd': '1234'
         })
@@ -95,7 +95,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_mismatched_password(self):
         # Username and password do not match
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': self.long_user_username,
             'pwd': '1234567890'
         })
@@ -109,7 +109,7 @@ class TestLoginView(TestCase):
     def test_successful_login_sets_session(self):
         # Successful login sets the session with the users' primary key (user_id)
         # from the database
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': self.long_user_username,
             'pwd': self.check_pass,
         })
@@ -125,7 +125,7 @@ class TestLoginView(TestCase):
 
     def test_successful_login_sends_redirect(self):
         # Successful login redirects the user to their homepage
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'unique_id': self.long_user_username,
             'pwd': self.check_pass,
         }, follow=True)
@@ -138,9 +138,9 @@ class TestLoginView(TestCase):
     def test_first_login_sends_redirect(self):
         # Successful login, when a user has not logged in before,
         # redirects them to the password change form
-        resp = self.client.post(reverse('login'), {
+        resp = self.client.post(reverse('login.html'), {
             'username': self.short_user_username,
             'password': self.check_pass,
         }, follow=False)
 
-        self.assertRedirects(resp, reverse('users-edit', args=[self.short_user.id]))
+        self.assertRedirects(resp, reverse('edit_password.html', args=[self.short_user.id]))

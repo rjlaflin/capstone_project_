@@ -1,15 +1,15 @@
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from .models import User, Goals
 from typing import Dict, Type
-from django.http import QueryDict, HttpRequest, HttpResponse
+from django.http import QueryDict, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
-
 
 
 class Home(View):
     def get(self, request):
         return render(request, "home.html")
+
 
 class Information(View):
     def get(self, request):
@@ -177,9 +177,6 @@ def ValidateGoalCompletionStatus(input):
             return False
 
 
-
-
-
 class Login(View):
     def get(self, request):
         request.session.pop("uname", None)
@@ -315,6 +312,7 @@ class AddUser(View):
         new_id = max(ids)
         new_id = new_id + 1
         print(new_id)
+
         if name != '' and uname != '' and password != '':
             if request.POST["role"] == 'Supervisor':
                 new_user = User(id=new_id, name=name, unique_id=uname, pwd=password,
@@ -367,7 +365,6 @@ class EditName(View):
         return redirect("/update_successful.html", {"user": user})
 
 
-
 class EditUsername(View):
     def get(self, request):
         user = User.objects.get(name=request.GET["name"])
@@ -405,8 +402,8 @@ class EditUsertype(View):
 
     def post(self, request):
         user = User.objects.get(name=request.GET["name"])
-        user.user_type= request.POST["user_type"]
-        #print(request.POST["name"])
+        user.user_type = request.POST["user_type"]
+        # print(request.POST["name"])
         user.save()
         print(user.name)
         user = User.objects.get(name=user.name)

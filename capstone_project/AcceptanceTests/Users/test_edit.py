@@ -16,7 +16,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
         self.session = self.client.session
         self.old_password = 'a-very-good-password'
         self.new_password = 'another-lesser-password'
-        # self.new_phone = '2622915566'
+        self.new_insurance = 'this is very good insurance information'
 
         self.supervisor_username = 'cmwojta'
         self.supervisor = User.objects.create(
@@ -49,8 +49,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_edit_self_contact(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username
-            # 'phone': '4253084859'
+            'user': self.supervisor_username,
+            'user_insurance': 'this is very good insurance information'
         }, follow=False)
 
         self.assertContainsMessage(resp, Message('Contact Information Updated'))
@@ -63,9 +63,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_edit_self_password(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'old_password': self.old_password,
-            'new_password': self.new_password,
+            'user': self.supervisor_username,
+            'user_pwd': self.new_password,
         }, follow=False)
 
         self.assertContainsMessage(resp, Message('Password Updated'))
@@ -75,37 +74,38 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             reverse('users-view', args=(self.supervisor.id,)),
         )
 
-    '''def test_edit_self_updates_database(self):
+    def test_edit_self_updates_database(self):
         # This test uses the staff to update self instead of supervisor, to cover more use cases
         self.set_staff_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': self.staff_username
-            'phone': self.new_phone,
+            'user': self.staff_username,
+            'user_insurance': self.new_insurance,
         }, follow=False)
 
         new_staff = User.objects.get(unique_id=self.staff_username)
 
         self.assertIsNotNone(new_staff)
-        self.assertEqual(new_staff.phone, self.new_phone, 'Did not change contact information in database')
+        self.assertEqual(new_staff.insurance_information, self.new_insurance,
+                         'Did not change contact information in database')
 
     def test_supervisor_edit_other_updates_database(self):
         self.set_supervisor_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': self.staff_username
-            'phone': self.new_phone,
+            'user': self.staff_username,
+            'user_insurance': self.new_insurance,
         }, follow=False)
 
         new_staff = User.objects.get(unique_id=self.staff_username)
 
         self.assertIsNotNone(new_staff)
-        self.assertEqual(new_staff.phone, self.new_phone, 'Did not change contact information in database') '''
+        self.assertEqual(new_staff.insurance_information, self.new_insurance,
+                         'Did not change contact information in database')
 
     def test_rejects_supervisor_edit_other_password(self):
         self.set_supervisor_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': self.staff_username,
-            'old_password': self.old_password,
-            'new_password': self.new_password,
+            'user': self.staff_username,
+            'user_pwd': self.new_password,
         }, follow=False)
 
         self.assertContainsMessage(resp, Message('You may not change another users password', Message.Type.ERROR))
@@ -115,7 +115,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_supervisor_edit_other_type(self):
         self.set_supervisor_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': self.staff_username,
+            'user': self.staff_username,
             'user_type': '0'
         }, follow=False)
 
@@ -129,7 +129,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_rejects_empty_username(self):
         self.set_supervisor_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': ''
+            'user': ''
 
         }, follow=True)
 
@@ -142,7 +142,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_rejects_too_long_username(self):
         self.set_supervisor_session()
         resp = self.client.post(self.staff_edit_url, {
-            'unique_id': 'a-very-long-username-that-the-database-could-not-hold'
+            'user': 'a-very-long-username-that-the-database-could-not-hold'
 
         }, follow=True)
 
@@ -156,9 +156,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
         self.session.save()
 
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'old_password': 'a password that is definitely correct',
-            'new_password': self.new_password,
+            'user': self.supervisor_username,
+            'user_pwd': self.new_password,
         }, follow=True)
 
         error = self.assertContextError(resp)
@@ -169,9 +168,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_rejects_empty_password_change(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'old_password': self.old_password,
-            'new_password': '',
+            'user': self.supervisor_username,
+            'user_pwd': ''
         }, follow=True)
 
         error = self.assertContextError(resp)
@@ -182,9 +180,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
     def test_rejects_too_short_password_change(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'old_password': self.old_password,
-            'new_password': '1234',
+            'user': self.supervisor_username,
+            'user_pwd': '1234',
         }, follow=True)
 
         error = self.assertContextError(resp)
@@ -192,33 +189,29 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
                         msg='Should have received an error about new password being too short.')
         self.assertEqual(error.message(), 'New Password needs to be 8 or more characters.')
 
-    '''
-    def test_rejects_invalid_phone(self):
+    def test_rejects_invalid_insurance(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'phone': '123456'
+            'user': self.supervisor_username,
+            'user_insurance': 'good insurance'
         }, follow=True)
 
         error = self.assertContextError(resp)
 
-        self.assertTrue(error.place() is UserEditPlace.PHONE,
-                        msg='Should have received an error about incorrect phone edit.')
-        self.assertEqual(error.message(), 'Phone number needs to be exactly 10 digits long.') '''
+        self.assertTrue(error.place() is UserEditPlace.INSURANCE,
+                        msg='Should have received an error about incorrect insurance edit.')
+        self.assertEqual(error.message(), 'Insurance needs to be longer than 20 characters or empty.')
 
     def test_rejects_non_supervisor_edit_other(self):
         self.set_staff_session()
-        '''resp_post = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
-            'phone': '123456'
-        }, follow=False) '''
         resp_post = self.client.post(self.supervisor_edit_url, {
-            'unique_id': self.supervisor_username,
+            'user': self.supervisor_username,
+            'user_insurance': 'good insurance'
         }, follow=False)
 
         self.assertContainsMessage(resp_post, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_post, reverse('login'))
+        self.assertRedirects(resp_post, reverse('index'))
 
         resp_get = self.client.get(self.supervisor_edit_url, {}, follow=False)
 
