@@ -33,18 +33,18 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
             # pwd_tmp=False
         )
 
-        self.session['user_id'] = self.Supervisor.id
+        self.session['user_info'] = self.Supervisor.id
         self.session.save()
 
         self.good_password = 'a-great-password'
 
-        self.url = reverse('users-create')
+        self.url = reverse('add_user.html')
 
     def test_rejects_empty_password(self):
         resp = self.client.post(self.url, {
-            'login_id': 'cmwojta',
+            'uname': 'cmwojta',
             # 'new_password': '',
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -57,9 +57,9 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_short_password(self):
         resp = self.client.post(self.url, {
-            'unique_id': 'cmwojta',
+            'uname': 'cmwojta',
             'new_password': '1234567',  # Short password
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -72,9 +72,9 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_empty_username(self):
         resp = self.client.post(self.url, {
-            # 'unique_id': '',
+            # 'uname': '',
             'new_password': self.good_password,  # Short password
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -87,9 +87,9 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_long_username(self):
         resp = self.client.post(self.url, {
-            'unique_id': 'a-very-long-username-that-would-never-fit-in-the-database',
+            'uname': 'a-very-long-username-that-would-never-fit-in-the-database',
             'new_password': self.good_password,
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -102,9 +102,9 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_username_with_spaces(self):
         resp = self.client.post(self.url, {
-            'unique_id': 'chris wojta',
+            'uname': 'chris wojta',
             'new_password': self.good_password,
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -120,9 +120,9 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
         self.session.save()
 
         resp = self.client.post(self.url, {
-            'login_id': 'arodgers',
+            'uname': 'arodgers',
             'new_password': self.good_password,
-            'user_type': '2',
+            'user_info': '2',
 
         }, follow=False)
 
@@ -134,4 +134,4 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
         with self.assertRaises(ObjectDoesNotExist):
             User.objects.get(unique_id='arodgers')
 
-        self.assertRedirects(resp, reverse('users-directory'))
+        self.assertRedirects(resp, reverse('home_instructor.html'))

@@ -9,9 +9,9 @@ from capstone_project.viewsupport.message import Message, MessageQueue
 from capstone_project.models import User, Goals
 
 
-class CourseCreates(AcceptanceTestCase[GoalEditError]):
+class TestGoalCreates(AcceptanceTestCase[GoalEditError]):
 
-    def setUp(self) -> None:
+    def setUp(self):
         self.client = Client()
         self.session = self.client.session
 
@@ -93,7 +93,7 @@ class CourseCreates(AcceptanceTestCase[GoalEditError]):
         self.assertEqual('Error with Adding Goal', error.message())
         # self.assertEqual(resp.context["message"], 'Error with Adding Goal',  msg='Error with Adding Goal')
 
-    def test_rejects_missing_user(self):
+    def test_rejects_missing_patient(self):
         resp = self.client.post(self.url, {
             'goalinput': self.good_goal,
             'goalnotes': self.good_notes,
@@ -130,3 +130,4 @@ class CourseCreates(AcceptanceTestCase[GoalEditError]):
             User.objects.get(unique_id='arodgers')
 
         self.assertRedirects(resp, reverse('goals.html'))
+
