@@ -167,7 +167,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
     def test_rejects_staff_edit_patients_not_assigned(self):
         self.set_staff_session()
         resp = self.client.post(self.staff_edit_url, {
-            'goalinput': self.staff_username,
+            'goalinput': self.goal,
             'goalnotes': "can't edit patients goals not assigned to them",
             'goalcurrency': self.good_curr,
             'goalcompletionstatus': self.good_status
