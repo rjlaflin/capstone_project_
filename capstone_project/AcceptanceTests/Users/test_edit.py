@@ -26,7 +26,10 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             user_type=User.UserType.Supervisor
         )
 
-        self.supervisor_edit_url = reverse('users-edit', args=(self.supervisor.id,))
+        self.supervisor_name_url = reverse('edit_name.html', args=(self.supervisor.id,))
+        self.supervisor_pw_url = reverse('edit_password.html', args=(self.supervisor.id,))
+        self.supervisor_insur_url = reverse('edit_insurance.html', args=(self.supervisor.id,))
+        self.supervisor_type_url = reverse('edit_usertype.html', args=(self.supervisor.id,))
 
         self.staff_username = 'arodgers12'
         self.staff = User.objects.create(
@@ -36,7 +39,8 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             user_type=User.UserType.Staff
         )
 
-        self.staff_edit_url = reverse('users-edit', args=(self.staff.id,))
+        self.staff_name_url = reverse('edit_name.html', args=(self.staff.id,))
+        self.staff_insur_url = reverse('edit_insurance.html', args=(self.staff.id,))
 
     def set_supervisor_session(self):
         self.session['user_id'] = self.supervisor.id
@@ -48,21 +52,35 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_edit_self_contact(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.supervisor_edit_url, {
-            'user': self.supervisor_username,
+        resp = self.client.post(self.supervisor_name_url, {
+            'name': 'new username',
             'user_insurance': 'this is very good insurance information'
+        }, follow=False)
+
+        self.assertContainsMessage(resp, Message('Username Updated'))
+
+        self.assertRedirects(
+            resp,
+            reverse('/update_successful.html', args=(self.supervisor.id,))
+        )
+
+    def test_edit_self_contact(self):
+        self.set_supervisor_session()
+        resp = self.client.post(self.supervisor_insur_url, {
+            'name': self.supervisor_username,
+            'user_insurance': 'this is good insurance information'
         }, follow=False)
 
         self.assertContainsMessage(resp, Message('Contact Information Updated'))
 
         self.assertRedirects(
             resp,
-            reverse('users-view', args=(self.supervisor.id,))
+            reverse('update_successful.html', args=(self.supervisor.id,))
         )
 
     def test_edit_self_password(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.supervisor_edit_url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': self.supervisor_username,
             'user_pwd': self.new_password,
         }, follow=False)
@@ -71,14 +89,14 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('users-view', args=(self.supervisor.id,)),
+            reverse('update_successful.html', args=(self.supervisor.id,)),
         )
 
     def test_edit_self_updates_database(self):
         # This test uses the staff to update self instead of supervisor, to cover more use cases
         self.set_staff_session()
-        resp = self.client.post(self.staff_edit_url, {
-            'user': self.staff_username,
+        resp = self.client.post(self.staff_name_url, {
+            'user': 'self.staff_username',
             'user_insurance': self.new_insurance,
         }, follow=False)
 
@@ -90,7 +108,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_supervisor_edit_other_updates_database(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.staff_edit_url, {
+        resp = self.client.post(self.supervisor_insur_url, {
             'user': self.staff_username,
             'user_insurance': self.new_insurance,
         }, follow=False)
@@ -103,7 +121,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_supervisor_edit_other_password(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.staff_edit_url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': self.staff_username,
             'user_pwd': self.new_password,
         }, follow=False)
@@ -114,7 +132,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_supervisor_edit_other_type(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.staff_edit_url, {
+        resp = self.client.post(self.supervisor_type_url, {
             'user': self.staff_username,
             'user_type': '0'
         }, follow=False)
@@ -124,11 +142,11 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             Message(f'User {self.staff.username} is now a Supervisor')
         )
 
-        self.assertRedirects(resp, reverse('users-view', args=(self.staff.id,)))
+        self.assertRedirects(resp, reverse('add_goal.html', args=(self.staff.id,)))
 
     def test_rejects_empty_username(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.staff_edit_url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': ''
 
         }, follow=True)
@@ -141,7 +159,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_too_long_username(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.staff_edit_url, {
+        resp = self.client.post(self.supervisor_name_url, {
             'user': 'a-very-long-username-that-the-database-could-not-hold'
 
         }, follow=True)
@@ -155,7 +173,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
         self.session['user_id'] = self.supervisor.id
         self.session.save()
 
-        resp = self.client.post(self.supervisor_edit_url, {
+        resp = self.client.post(self.supervisor_pw__url, {
             'user': self.supervisor_username,
             'user_pwd': self.new_password,
         }, follow=True)
@@ -167,7 +185,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_empty_password_change(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.supervisor_edit_url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': self.supervisor_username,
             'user_pwd': ''
         }, follow=True)
@@ -179,7 +197,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_too_short_password_change(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.supervisor_edit_url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': self.supervisor_username,
             'user_pwd': '1234',
         }, follow=True)
@@ -191,7 +209,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_invalid_insurance(self):
         self.set_supervisor_session()
-        resp = self.client.post(self.supervisor_edit_url, {
+        resp = self.client.post(self.supervisor_insur_url, {
             'user': self.supervisor_username,
             'user_insurance': 'good insurance'
         }, follow=True)
@@ -204,17 +222,18 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
     def test_rejects_non_supervisor_edit_other(self):
         self.set_staff_session()
-        resp_post = self.client.post(self.supervisor_edit_url, {
+        resp_post = self.client.post(self.staff_insur_url, {
             'user': self.supervisor_username,
             'user_insurance': 'good insurance'
         }, follow=False)
 
         self.assertContainsMessage(resp_post, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_post, reverse('index'))
+        self.assertRedirects(resp_post, reverse('home_instructor.html'))
 
-        resp_get = self.client.get(self.supervisor_edit_url, {}, follow=False)
+        resp_get = self.client.get(self.supervisor_insur_url, {}, follow=False)
 
         self.assertContainsMessage(resp_get, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_get, reverse('login'))
+        self.assertRedirects(resp_get, reverse('home_patients.html'))
+
