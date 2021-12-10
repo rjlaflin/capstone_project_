@@ -1,21 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+      html{
+           font-family: Arial;
+       }
+      	 .BodyWrapper{
+           border-width:2px;
+            border-style:solid;
+            border-color: #53ca4e;
+       }
+       div {
+       		margin-left: auto;
+  			margin-right: auto;
+       		width:60%;
+
+       }
+       span {
+           color: #40acf1;
+           font-size: 20px
+        }
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+
+            table-layout: fixed;
+            margin-left: auto;
+  			margin-right: auto;
+        }
+
+
+    </style>
     <meta charset="UTF-8">
-    <title>Teaching Tool</title>
-    <link href="/static/stylesheet.css" type="text/css" rel="stylesheet">
+    <title>Welcome Page</title>
+
 </head>
 <body>
-    <h1>Welcome</h1>
-    <br><br>
-    <p>Here Your info:</p><fieldset>
-        <p><b>First name:</b>  {{ user_info.name }}</p>
-        <p><b>Position:</b>
-        </p>
+    <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+	<div class="BodyWrapper">
+      <h1>Welcome {{user_info.name}}</h1>
 
-    </fieldset>
-    <a href="/">Back</a>
-    <a href="/patient_goals_page.html">Go To View Your Goals</a>
-    </body>
+      <p>Here is your info:</p>
+          <p><b>First name:</b>  {{ user_info.name }}</p>
+          <p><b>Patient</b>
+          </p>
+
+
+      <a href="/patient_goals_page.html">Go To View Your Goals</a>
+    </div>
 </body>
 </html>
