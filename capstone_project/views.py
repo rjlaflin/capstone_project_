@@ -58,7 +58,11 @@ class GetIndividualsGoals(View):
 
 class GetGoals(View):
     def get(self, request):
-        return render(request, "goals.html", get_goal_data())
+        user = User.objects.get(unique_id=request.session['uname'])
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        else:
+            return render(request, "goals.html", get_goal_data())
 
     def post(self, request):
 
@@ -81,7 +85,13 @@ def get_specific_goal_data(goalid, editgoalmessage):
 
 class AddGoalView(View):
     def get(self, request):
-        return render(request, "add_goal.html", get_patients(''))
+        user = User.objects.get(unique_id=request.session['uname'])
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        elif user.user_type == 1:
+            return redirect("goals.html", get_goal_data())
+        else:
+            return render(request, "add_goal.html", get_patients(''))
 
     def post(self, request):
 
@@ -106,11 +116,13 @@ class AddGoalView(View):
             user2 = User(User.objects.get(unique_id=request.POST['patient']).id)
             id1 = Goals.objects.all().count()
 
-            a = Goals.objects.create(id=id1, goal=validgoal, notesforgoal=validgoalnotes,userforgoal=user2, goalcurrency=validgoalcurrency, statusofgoal=validgoalcompletionstatus)
+            a = Goals.objects.create(id=id1, goal=validgoal, notesforgoal=validgoalnotes, userforgoal=user2,
+                                     goalcurrency=validgoalcurrency, statusofgoal=validgoalcompletionstatus)
             a.save()
 
         except:
-            return render(request, "add_goal.html", get_patients('Error adding goal to the database. Try filling out the form again.'))
+            return render(request, "add_goal.html",
+                          get_patients('Error adding goal to the database. Try filling out the form again.'))
 
         return redirect("goals.html", get_goal_data())
 
@@ -207,10 +219,14 @@ class Login(View):
 
 class HomeSupervisor(View):
     def get(self, request):
-        all_users = User.objects.all()
-        cur_user = User.objects.get(unique_id=request.session["uname"])
-        print(cur_user.name)
-        return render(request, "home_Supervisor.html", {"all_users": all_users, "cur_user": cur_user})
+        user = User.objects.get(unique_id=request.session['uname'])
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        else:
+            all_users = User.objects.all()
+            cur_user = User.objects.get(unique_id=request.session["uname"])
+            print(cur_user.name)
+            return render(request, "home_Supervisor.html", {"all_users": all_users, "cur_user": cur_user})
 
     def post(self, request):
         pass
@@ -218,8 +234,12 @@ class HomeSupervisor(View):
 
 class EditGoalView(View):
     def get(self, request):
+        user = User.objects.get(unique_id=request.session['uname'])
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        else:
+            return render(request, "edit_goal.html", get_specific_goal_data(request.session['currentgoalid'], ''))
 
-        return render(request, "edit_goal.html", get_specific_goal_data(request.session['currentgoalid'], ''))
     def post(self, request):
 
         validgoalinput = ValidateGoalInput(request.POST['goalinput'])
@@ -229,15 +249,19 @@ class EditGoalView(View):
         validgoalstatus = ValidateGoalCompletionStatus(request.POST['goalcompletionstatus'])
 
         if not validgoalid:
-            return redirect("goals.html", get_goal_data(), {'message':'Invalid Goal Id'})
+            return redirect("goals.html", get_goal_data(), {'message': 'Invalid Goal Id'})
         if not validgoalinput:
-            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal input was not valid'))
+            return render(request, "edit_goal.html",
+                          get_specific_goal_data(request.POST['goalid'], 'Goal input was not valid'))
         if not validgoalnotes:
-            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal notes input was not valid'))
+            return render(request, "edit_goal.html",
+                          get_specific_goal_data(request.POST['goalid'], 'Goal notes input was not valid'))
         if not validgoalcurrency:
-            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Currency selection input was not valid'))
+            return render(request, "edit_goal.html",
+                          get_specific_goal_data(request.POST['goalid'], 'Goal Currency selection input was not valid'))
         if not validgoalstatus:
-            return render(request, "edit_goal.html", get_specific_goal_data(request.POST['goalid'], 'Goal Status Selected was not valid'))
+            return render(request, "edit_goal.html",
+                          get_specific_goal_data(request.POST['goalid'], 'Goal Status Selected was not valid'))
 
         GoalUser = Goals.objects.get(id=request.POST['goalid']).userforgoal
 
@@ -250,7 +274,7 @@ class EditGoalView(View):
 
         UpdatedGoal.save()
 
-        return redirect("goals.html", get_goal_data(), {'message':'Successfully edited goal.'})
+        return redirect("goals.html", get_goal_data(), {'message': 'Successfully edited goal.'})
 
 def ValidateGoalId(input):
     ThisGoal = Goals.objects.get(id=input)
@@ -287,9 +311,14 @@ def get_patients(input):
 class HomeInstructor(View):
     def get(self, request):
         user = User.objects.get(unique_id=request.session['uname'])
-        return render(request, "home_instructor.html", {"user": user})
+        if user.user_type == 2:
+            return redirect("patient_goals_page.html", get_individual_goal_data(user))
+        elif user.user_type == 0:
+            return redirect(("home_supervisor.html"))
+        else:
+            return render(request, "home_instructor.html", {"user": user})
 
-    def post(self,request):
+    def post(self, request):
         get_user = request.POST[""]
         return render(request, "home_instructor.html")
 
@@ -297,14 +326,25 @@ class HomeInstructor(View):
 class HomePatient(View):
     def get(self, request):
         user = User.objects.get(unique_id=request.session["uname"])
-        return render(request, "home_patient.html", {"user_info": user})
+        if user.user_type == 0:
+            return redirect("home_supervisor.html")
+        elif user.user_type == 1:
+            return redirect("home_instructor.html")
+        else:
+            return render(request, "home_patient.html", {"user_info": user})
 
     def post(self,request):
         pass
 
 class AddUser(View):
     def get(self, request):
-        return render(request, "add_user.html")
+        user = User.objects.get(unique_id=request.session["uname"])
+        if user.user_type == 2:
+            return redirect("home_patient.html", {"user_info": user})
+        elif user.user_type == 1:
+            return redirect("home_instructor.html")
+        else:
+            return render(request, "add_user.html")
 
     def post(self, request):
         name = request.POST["name"]
