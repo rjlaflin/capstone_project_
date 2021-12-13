@@ -451,7 +451,7 @@ class EditUsertype(View):
 
 
 '''
-Code For Acceptance Tests and Unit Tests for Edit user and Insurance
+Code For Acceptance Tests and Unit Tests for Edit user and Insurance, not working at the moment
 class EditUsertype(View):
    def get(self, request: HttpRequest):
         user = LoginUtil.get_user_and_validate_by_user_id(request.session, password_change_redirect=False)
