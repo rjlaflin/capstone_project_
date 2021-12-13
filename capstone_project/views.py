@@ -450,6 +450,115 @@ class EditUsertype(View):
         return redirect("/update_successful.html", {"user": user})
 
 
+'''
+Code For Acceptance Tests and Unit Tests for Edit user and Insurance
+class EditUsertype(View):
+   def get(self, request: HttpRequest):
+        user = LoginUtil.get_user_and_validate_by_user_id(request.session, password_change_redirect=False)
+
+        if type(user) is HttpResponseRedirect:
+            return user
+
+        if user.id is None:
+            MessageQueue.push(request.session, Message(f'No user with id {user.id} exists.', Message.Type.ERROR))
+            return redirect(reverse('/home_Supervisor.html'))
+
+        if user.id != user.id and Users.check_user_type(user) != User.UserType.Supervisor:
+            MessageQueue.push(request.session, Message('You are not allowed to edit other users.', Message.Type.ERROR))
+            return redirect(reverse('/home_instructor.html'))
+
+        return render(request, "edit_usertype.html", {"user": user})
+
+    def post(self, request):
+        user = LoginUtil.get_user_and_validate_by_user_id(request.session, password_change_redirect=False)
+
+        if type(user) is HttpResponseRedirect:
+            return user
+
+        if user.id is None:
+            MessageQueue.push(request.session, Message(f'No user with id {user.id} exists.', Message.Type.ERROR))
+            return redirect(reverse('/home_Supervisor.html'))
+
+        if user.id != user.id and Users.check_user_type(user) != User.UserType.ADMIN:
+            MessageQueue.push(request.session, Message('You are not allowed to edit other users.', Message.Type.ERROR))
+            return redirect(reverse('/home_instructor.html'))
+
+        fields: Dict[str, Optional[str]] = {}
+        try:
+            fields['user_type'] = str(request.POST['user_type'])
+        except KeyError:
+            fields['univ_id'] = None
+
+        def render_error(error: UserEditError):
+            return render(request, 'edit_usertype.html', {
+                'user': user,
+                'error': error,
+            })
+
+        if user.user_type is not None:
+            # Chane user type
+            if Users.check_user_type(user) != User.UserType.Supervisor:
+                return render_error(UserEditError(
+                        'Only admins may change user types',
+                        UserEditPlace.TYPE
+                    ))
+
+            # to_edit.type = fields['user_type']
+
+            if fields['user_type'] == 'A':
+                user.user_type = User.UserType.Supervisor
+            elif fields['user_type'] == 'P':
+                user.user_type = User.UserType.Staff
+            else:
+                user.user_type = User.UserType.Patient
+
+            user.save()
+            MessageQueue.push(request.session, Message(f'User {user.unique_id} is now a {user.get_user_type_display()}'))
+
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+
+
+class EditInsurance(View):
+    def get(self, request):
+        user = User.objects.get(name=request.GET["name"])
+
+        if user.user_type is None:
+            MessageQueue.push(request.session, Message(f'No user with id {user.id} exists.', Message.Type.ERROR))
+            return redirect(reverse('/home_Supervisor.html'))
+
+        if user.id != user.id and user.user_type != User.UserType.ADMIN:
+            MessageQueue.push(request.session, Message('You are not allowed to edit other users.', Message.Type.ERROR))
+            return redirect(reverse('/home_instructor.html'))
+
+        return render(request, "edit_insurance.html", {"user": user})
+
+    def post(self, request):
+        user = User.objects.get(name=request.GET["name"])
+        user.insurance_information = request.POST["user_insurance"]
+        #print(request.POST["name"])
+
+        if user.user_type is None:
+            MessageQueue.push(request.session, Message(f'No user with id {user.id} exists.', Message.Type.ERROR))
+            return redirect(reverse('/home_Supervisor.html'))
+
+        if user.id != user.id and user.user_type != User.UserType.ADMIN:
+            MessageQueue.push(request.session, Message('You are not allowed to edit other users.', Message.Type.ERROR))
+            return redirect(reverse('/home_instructor.html'))
+
+        try:
+            user.user_type = request.POST["user_type"]
+            user.save()
+        except KeyError:
+            user.user_type = None
+
+        print(user.name)
+        user = User.objects.get(name=user.name)
+        return redirect("/update_successful.html", {"user": user})
+'''
+
+
 class EditInsurance(View):
     def get(self, request):
         user = User.objects.get(name=request.GET["name"])
