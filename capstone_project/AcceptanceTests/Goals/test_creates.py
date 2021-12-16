@@ -56,7 +56,7 @@ class TestGoalCreates(AcceptanceTestCase[GoalEditError]):
         self.session['user_id'] = self.supervisor_user.id
         self.session.save()
 
-        self.url = reverse('add_goal.html')
+        self.url = reverse('add_goal')
 
     def test_creates(self):
         resp = self.client.post(self.url, {
@@ -69,7 +69,7 @@ class TestGoalCreates(AcceptanceTestCase[GoalEditError]):
 
         goal = list(Goals.objects.all())[0]
 
-        self.assertRedirects(resp, reverse('goals.html', args=[goal.id]))
+        self.assertRedirects(resp, reverse('goals', args=[goal.id]))
 
         self.assertEqual(self.good_goal, goal.goal)
         self.assertEqual(self.good_notes, goal.notesforgoal)
@@ -129,5 +129,5 @@ class TestGoalCreates(AcceptanceTestCase[GoalEditError]):
         with self.assertRaises(ObjectDoesNotExist):
             User.objects.get(unique_id='arodgers')
 
-        self.assertRedirects(resp, reverse('goals.html'))
+        self.assertRedirects(resp, reverse('goals'))
 

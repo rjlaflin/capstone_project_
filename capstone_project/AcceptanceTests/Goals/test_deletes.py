@@ -47,9 +47,9 @@ class TestDeleteGoals(TestCase):
             goalcurrency=0
         )
 
-        self.valid_delete_url = reverse('goals-delete.html', args=(self.deleted_goal.id,))
-        self.valid_delete_self = reverse('goals-delete.html', args=(self.deleted_goal_two.id,))
-        self.invalid_delete_url = reverse('goals-delete.html', args=(340000,))
+        self.valid_delete_url = reverse('goals-delete', args=(self.deleted_goal.id,))
+        self.valid_delete_self = reverse('goals-delete', args=(self.deleted_goal_two.id,))
+        self.invalid_delete_url = reverse('goals-delete', args=(340000,))
         # Only two goals were created so the max valid id is 2
 
         self.session = self.client.session
@@ -71,7 +71,7 @@ class TestDeleteGoals(TestCase):
         message: Message = self.get_first_message(resp)
 
         self.assertIsNotNone(resp, 'Post did not return value')
-        self.assertRedirects(resp, reverse('goals.html'))
+        self.assertRedirects(resp, reverse('goals'))
 
         self.assertTrue(message.type() is Message.Type.REGULAR, 'Did not send correct message type')
         self.assertEqual(message.message(), f'Successfully deleted goal {self.deleted_goal}',
@@ -83,7 +83,7 @@ class TestDeleteGoals(TestCase):
         message: Message = self.get_first_message(resp)
 
         self.assertIsNotNone(resp, 'Post did not return value')
-        self.assertRedirects(resp, reverse('goals.html'))
+        self.assertRedirects(resp, reverse('goals'))
 
         self.assertTrue(message.type() is Message.Type.ERROR, 'Did not send correct message type')
         self.assertEqual(message.message(), f'No goal with id {340000} exists', 'Did not return correct message')
@@ -92,8 +92,8 @@ class TestDeleteGoals(TestCase):
         self.session['user_id'] = self.staff.id
         self.session.save()
 
-        resp_post = self.client.post(reverse('goals-delete.html', args=(self.supervisor.id,)), {}, follow=False)
-        resp_get = self.client.get(reverse('goals-delete.html', args=(self.supervisor.id,)), {}, follow=False)
+        resp_post = self.client.post(reverse('goals-delete', args=(self.supervisor.id,)), {}, follow=False)
+        resp_get = self.client.get(reverse('goals-delete', args=(self.supervisor.id,)), {}, follow=False)
 
         message_post = self.get_first_message(resp_post)
         message_get = self.get_first_message(resp_get)
@@ -101,8 +101,8 @@ class TestDeleteGoals(TestCase):
         self.assertIsNotNone(resp_post, 'Post did not return value')
         self.assertIsNotNone(resp_get, 'Get did not return value')
 
-        self.assertRedirects(resp_post, reverse('goals.html'))
-        self.assertRedirects(resp_get, reverse('goals.html'))
+        self.assertRedirects(resp_post, reverse('goals'))
+        self.assertRedirects(resp_get, reverse('goals'))
 
         self.assertTrue(message_post.type() is Message.Type.ERROR, 'Did not send correct message type')
         self.assertEqual(message_post.message(), f'You do not have permission to delete goals',
@@ -121,8 +121,8 @@ class TestDeleteGoals(TestCase):
         self.assertIsNotNone(resp_post, 'Post did not return value')
         self.assertIsNotNone(resp_get, 'Get did not return value')
 
-        self.assertRedirects(resp_post, reverse('info.html'))
-        self.assertRedirects(resp_get, reverse('info.html'))
+        self.assertRedirects(resp_post, reverse('home'))
+        self.assertRedirects(resp_get, reverse('home'))
 
     def test_delete_removes_goal(self):
         self.client.post(self.valid_delete_url, {}, follow=True)

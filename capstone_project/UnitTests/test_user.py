@@ -9,7 +9,7 @@ class TestUser(TestCase):
 
     def setUp(self):
         self.name1 = 'john doe'
-        # self.phone1 = '123-456-7890'
+        self.insurance1 = 'very good insurance'
         self.username1 = 'johndoe'
         self.password1 = 'password123'
         self.id1 = User.objects.create(
@@ -17,7 +17,7 @@ class TestUser(TestCase):
             unique_id=self.username1,
             pwd=self.password1,
             name=self.name1,
-            # phone=self.phone1
+            insurance_information=self.insurance1
             )
         self.id2 = User.objects.create(user_type=User.UserType.Staff, unique_id='staffmember', pwd='Password456')
 
@@ -48,12 +48,11 @@ class TestUser(TestCase):
     def test_update_user(self):
         user = Users.get_user_by_user_id(self.id2.id)
         name2 = 'Jane Doe'
-        # phone2 = '456-123-7890'
-        # Users.update_user(user, name2, phone2)
-        Users.update_user(user, name2)
+        insurance2 = ''
+        Users.update_user(user, name2, insurance2)
         user = Users.get_user_by_user_id(self.id2.id)
         self.assertEqual(name2, user.name, msg='')
-        # self.assertEqual(phone2, user.phone, msg='')
+        self.assertEqual(insurance2, user.insurance_information, msg='')
 
     def test_update_password(self):
         new_password = 'NewPassword123'

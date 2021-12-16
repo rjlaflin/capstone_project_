@@ -63,7 +63,7 @@ class LoginUtil:
                 MessageQueue.push(session, redirect_message)
 
             if redirect_to is None:
-                redirect_to = redirect(reverse('index'))
+                redirect_to = redirect(reverse('home'))
 
             if type(redirect_to) is str:
                 redirect_to = redirect(redirect_to)

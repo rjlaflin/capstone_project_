@@ -38,7 +38,7 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
 
         self.good_password = 'a-great-password'
 
-        self.url = reverse('add_user.html')
+        self.url = reverse('add_user')
 
     def test_rejects_empty_password(self):
         resp = self.client.post(self.url, {
@@ -134,4 +134,4 @@ class TestCreateUserView(AcceptanceTestCase[UserEditError]):
         with self.assertRaises(ObjectDoesNotExist):
             User.objects.get(unique_id='arodgers')
 
-        self.assertRedirects(resp, reverse('home_instructor.html'))
+        self.assertRedirects(resp, reverse('home_instructor'))

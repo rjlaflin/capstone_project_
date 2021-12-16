@@ -29,12 +29,12 @@ class TestLoginView(TestCase):
         )
 
     def test_rejects_empty_username(self):
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': '',
             'psw': 'verysecurepassword'
         })
 
-        error: resp.context['error']
+        error: LoginError = resp.context['error']
 
         self.assertIsNotNone(error, 'Did not return error message')
         self.assertTrue(error.place().username(), 'Did not return error with username')
@@ -44,7 +44,7 @@ class TestLoginView(TestCase):
         # Usernames may not be longer than 20 characters,
         # does not even ask the database
 
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': 'very_long_username_username_that_the_database_cannot_hold',
             'psw': 'verysecurepassword',
         })
@@ -57,7 +57,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_no_such_username(self):
         # Username does not exist in the database
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'unique_id': 'arodgers12',
             'pwd': 'password1',
         })
@@ -69,7 +69,7 @@ class TestLoginView(TestCase):
         self.assertEqual(error.message(), 'No such user')
 
     def test_rejects_empty_password(self):
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.long_user_username,
             'psw': ''
         })
@@ -82,7 +82,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_short_password(self):
         # Passwords of less than or equal to 8 passwords are not valid
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.long_user_username,
             'psw': '1234'
         })
@@ -95,7 +95,7 @@ class TestLoginView(TestCase):
 
     def test_rejects_mismatched_password(self):
         # Username and password do not match
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.long_user_username,
             'psw': '1234567890'
         })
@@ -109,7 +109,7 @@ class TestLoginView(TestCase):
     def test_successful_login_sets_session(self):
         # Successful login sets the session with the users' primary key (user_id)
         # from the database
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.long_user_username,
             'psw': self.check_pass,
         })
@@ -125,7 +125,7 @@ class TestLoginView(TestCase):
 
     def test_successful_login_sends_redirect(self):
         # Successful login redirects the user to their homepage
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.long_user_username,
             'psw': self.check_pass,
         }, follow=True)
@@ -133,14 +133,14 @@ class TestLoginView(TestCase):
         redirects = resp.redirect_chain
 
         self.assertEqual(len(redirects), 1, 'Redirected too many times')
-        self.assertEqual(redirects[0][0], reverse('info.html'), 'Did not redirect returning user to homepage')
+        self.assertEqual(redirects[0][0], reverse('home'), 'Did not redirect returning user to homepage')
 
     def test_first_login_sends_redirect(self):
         # Successful login, when a user has not logged in before,
         # redirects them to the password change form
-        resp = self.client.post(reverse('login.html'), {
+        resp = self.client.post(reverse('login'), {
             'uname': self.short_user_username,
             'psw': self.check_pass,
         }, follow=False)
 
-        self.assertRedirects(resp, reverse('edit_password.html', args=[self.short_user.id]))
+        self.assertRedirects(resp, reverse('edit_password', args=[self.short_user.id]))

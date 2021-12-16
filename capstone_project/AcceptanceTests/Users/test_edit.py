@@ -26,10 +26,10 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             user_type=User.UserType.Supervisor
         )
 
-        self.supervisor_name_url = reverse('edit_name.html', args=(self.supervisor.id,))
-        self.supervisor_pw_url = reverse('edit_password.html', args=(self.supervisor.id,))
-        self.supervisor_insur_url = reverse('edit_insurance.html', args=(self.supervisor.id,))
-        self.supervisor_type_url = reverse('edit_usertype.html', args=(self.supervisor.id,))
+        self.supervisor_name_url = reverse('name', args=(self.supervisor.id,))
+        self.supervisor_pw_url = reverse('user_pwd', args=(self.supervisor.id,))
+        self.supervisor_insur_url = reverse('user_insurance', args=(self.supervisor.id,))
+        self.supervisor_type_url = reverse('user', args=(self.supervisor.id,))
 
         self.staff_username = 'arodgers12'
         self.staff = User.objects.create(
@@ -39,21 +39,21 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             user_type=User.UserType.Staff
         )
 
-        self.staff_name_url = reverse('edit_name.html', args=(self.staff.id,))
-        self.staff_insur_url = reverse('edit_insurance.html', args=(self.staff.id,))
+        self.staff_name_url = reverse('edit_name', args=(self.staff.id,))
+        self.staff_insur_url = reverse('edit_insurance', args=(self.staff.id,))
 
     def set_supervisor_session(self):
-        self.session['user_id'] = self.supervisor.id
+        self.session['id'] = self.supervisor.id
         self.session.save()
 
     def set_staff_session(self):
-        self.session['user_id'] = self.staff.id
+        self.session['id'] = self.staff.id
         self.session.save()
 
     def test_edit_self_contact(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_name_url, {
-            'name': 'new username',
+            'user': 'new username',
             'user_insurance': 'this is very good insurance information'
         }, follow=False)
 
@@ -61,13 +61,13 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('/update_successful.html', args=(self.supervisor.id,))
+            reverse('update_successful', args=(self.supervisor.id,))
         )
 
     def test_edit_self_contact(self):
         self.set_supervisor_session()
         resp = self.client.post(self.supervisor_insur_url, {
-            'name': self.supervisor_username,
+            'user': self.supervisor_username,
             'user_insurance': 'this is good insurance information'
         }, follow=False)
 
@@ -75,7 +75,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('update_successful.html', args=(self.supervisor.id,))
+            reverse('update_successful', args=(self.supervisor.id,))
         )
 
     def test_edit_self_password(self):
@@ -89,7 +89,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('update_successful.html', args=(self.supervisor.id,)),
+            reverse('update_successful', args=(self.supervisor.id,)),
         )
 
     def test_edit_self_updates_database(self):
@@ -142,7 +142,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
             Message(f'User {self.staff.username} is now a Supervisor')
         )
 
-        self.assertRedirects(resp, reverse('add_goal.html', args=(self.staff.id,)))
+        self.assertRedirects(resp, reverse('add_goal', args=(self.staff.id,)))
 
     def test_rejects_empty_username(self):
         self.set_supervisor_session()
@@ -173,7 +173,7 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
         self.session['user_id'] = self.supervisor.id
         self.session.save()
 
-        resp = self.client.post(self.supervisor_pw__url, {
+        resp = self.client.post(self.supervisor_pw_url, {
             'user': self.supervisor_username,
             'user_pwd': self.new_password,
         }, follow=True)
@@ -229,11 +229,11 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertContainsMessage(resp_post, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_post, reverse('home_instructor.html'))
+        self.assertRedirects(resp_post, reverse('home_instructor'))
 
         resp_get = self.client.get(self.supervisor_insur_url, {}, follow=False)
 
         self.assertContainsMessage(resp_get, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_get, reverse('home_patients.html'))
+        self.assertRedirects(resp_get, reverse('home_patients'))
 
