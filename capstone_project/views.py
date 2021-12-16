@@ -405,7 +405,7 @@ class HomePatient(View):
     def get(self, request):
         user = User.objects.get(unique_id=request.session["uname"])
         if user.user_type == 0:
-            return redirect("home_supervisor.html")
+            return redirect("home_Supervisor.html")
         elif user.user_type == 1:
             return redirect("home_instructor.html")
         else:

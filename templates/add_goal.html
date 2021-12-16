@@ -9,14 +9,16 @@
        		margin-left: auto;
   			margin-right: auto;
        		width:60%;
-       		border-width:2px;
-            border-style:solid;
-            border-color: #53ca4e;
        }
        span {
            color: #40acf1;
            font-size: 20px
         }
+       .FormWrapper{
+           border-width:2px;
+           border-style:solid;
+           border-color:#53ca4e
+       }
         .AddGoalLabelColumn{
            color: #40acf1;
            width: 40%;
@@ -43,8 +45,9 @@
     </style>
   </head>
   <body>
-  	<img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
-    <div class="FormWrapper" id="AddGoalFormWrapper">
+  	<div class="FormWrapper" id="AddGoalFormWrapper">
+        <img src="https://www.geneseecommunityservices.com/wp-content/uploads/2019/08/GCS_logo_mypath.png">
+
       <form method="post"> {% csrf_token %}
         <datalist id="GoalCurrencyOptions">
         	<option>Completed Goal</option>
