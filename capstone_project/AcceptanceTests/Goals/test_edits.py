@@ -24,7 +24,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
             # pwd_tmp=False
         )
 
-        self.supervisor_edit_url = reverse('edit_goal.html', args=(self.supervisor_user.id,))
+        self.supervisor_edit_url = reverse('edit_goal', args=(self.supervisor_user.id,))
 
         # Add staff
         self.staff_user = User.objects.create(
@@ -33,7 +33,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
             user_type=User.UserType.Staff,
             # pwd_tmp=False
         )
-        self.staff_edit_url = reverse('edit_goal.html', args=(self.staff_user.id,))
+        self.staff_edit_url = reverse('edit_goal', args=(self.staff_user.id,))
 
         # Patient user
         self.patient_username = 'cmwojta'
@@ -80,7 +80,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('goals.html', args=(self.supervisor_user.id,))
+            reverse('goals', args=(self.supervisor_user.id,))
         )
 
     def test_edit_notes(self):
@@ -99,7 +99,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('goals.html', args=(self.supervisor_user.id,))
+            reverse('goals', args=(self.supervisor_user.id,))
         )
 
     def test_edit_currency(self):
@@ -118,7 +118,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('goals.html', args=(self.supervisor_user.id,))
+            reverse('goals', args=(self.supervisor_user.id,))
         )
 
     def test_edit_status(self):
@@ -137,7 +137,7 @@ class TestGoalEdits(AcceptanceTestCase[GoalEditError]):
 
         self.assertRedirects(
             resp,
-            reverse('goals.html', args=(self.supervisor_user.id,))
+            reverse('goals', args=(self.supervisor_user.id,))
         )
 
     def test_edit_goal_staff_database(self):

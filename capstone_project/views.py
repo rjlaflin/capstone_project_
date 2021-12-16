@@ -1,6 +1,16 @@
 from django.views import View
 from django.shortcuts import render, redirect, reverse
 from .models import User, Goals
+from typing import Union
+from typing import List, Optional
+
+from capstone_project.viewsupport.message import Message, MessageQueue
+from capstone_project.viewsupport.errors import UserEditError, UserEditPlace
+from capstone_project.viewsupport.errors import LoginError, LoginPlace
+from capstone_project.ClassDesign.users import Users
+from capstone_project.ClassDesign.LoginUtil import LoginUtil
+from capstone_project.ClassDesign.Util import Util
+
 from typing import Dict, Type
 from django.http import QueryDict, HttpRequest, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -214,6 +224,77 @@ class Login(View):
         return render(request, "login.html", {'message': 'Invalid name/password'})
 
 
+'''
+Code For Acceptance Tests and Unit Tests for login, not working at the moment
+
+class Login(View):
+    def get(self, request: HttpRequest):
+        u = request.session.get('uname', None) is None
+
+        if u:
+            return render(request, 'login.html', {
+                'messages': MessageQueue.drain(request.session),
+            })
+        else:
+            return redirect(reverse('home'))
+
+    def post(self, request: HttpRequest):
+
+        r_username = request.POST.get('uname', '')
+        r_password = request.POST.get('psw', '')
+
+        # Username Empty
+        if len(r_username) == 0:
+            return render(request, 'login.html', {
+                'error': LoginError('You must provide a username', LoginPlace.USERNAME)
+            })
+
+        # Username too long
+        if len(r_username) > 50:
+            return render(request, 'login.html', {
+                'error': LoginError('That Username is too Long', LoginPlace.USERNAME)
+            })
+
+        # Password Empty
+        if len(r_password) == 0:
+            return render(request, 'login.html', {
+                'error': LoginError('You must provide a password', LoginPlace.PASSWORD),
+                'uname': r_username
+            })
+
+        # Password too short
+        if len(r_password) < 30:
+            return render(request, 'login.html', {
+                'error': LoginError('A password must be at least 30 characters in length', LoginPlace.PASSWORD),
+                'uname': r_username,
+            })
+
+        user = Users.get_user_by_unique_id(r_username)
+
+        if user is None:
+            # No such user exists
+            return render(request, 'login.html', {
+                'error': LoginError('No such user', LoginPlace.USERNAME),
+                'uname': r_username,
+            })
+
+        if user.pwd != r_password:
+            # The password does not match for the user
+            return render(request, 'login.html', {
+                'error': LoginError('Incorrect Password', LoginPlace.PASSWORD),
+                'uname': r_username,
+            })
+        else:
+            # Login successful
+            request.session['uname'] = user.unique_id
+            if user.user_type == 0:
+                return redirect(reverse("home_Supervisor"))
+            if user.user_type == 1:
+                return redirect(reverse("home_instructor"))
+            if user.user_type == 2:
+                return redirect(reverse("home_patient"))
+'''
+
 class HomeSupervisor(View):
     def get(self, request):
         user = User.objects.get(unique_id=request.session['uname'])
@@ -333,6 +414,7 @@ class HomePatient(View):
     def post(self,request):
         pass
 
+
 class AddUser(View):
     def get(self, request):
         user = User.objects.get(unique_id=request.session["uname"])
@@ -372,6 +454,92 @@ class AddUser(View):
         all_users = User.objects.all()
         return render(request, "home_Supervisor.html", {"all_users": all_users})
 
+
+'''
+Code For Acceptance Tests and Unit Tests for Create user, not working at the moment
+
+class AddUser(View):
+    def get(self, request: HttpRequest) -> Union[HttpResponse, HttpResponseRedirect]:
+        maybe_user = LoginUtil.get_user_and_validate_by_user_id(
+            request.session,
+            [User.UserType.Supervisor],
+            reverse('add_user'),
+            Message(
+                'You do not have permission to create users',
+                Message.Type.ERROR,
+            )
+        )
+        if type(maybe_user) is HttpResponseRedirect:
+            return maybe_user
+
+        return render(request, 'add_user.html', {
+            'self': maybe_user,
+            'messages': MessageQueue.drain(request.session),
+        })
+
+    def post(self, request: HttpRequest):
+        maybe_user = LoginUtil.get_user_and_validate_by_user_id(
+            request.session,
+            [User.UserType.Supervisor],
+            reverse('add_user'),
+            Message(
+                'You do not have permission to create users',
+                Message.Type.ERROR,
+            )
+        )
+        if type(maybe_user) is HttpResponseRedirect:
+            return maybe_user
+
+        new_pass: Optional[str] = request.POST.get('pwd', None)
+        username: Optional[str] = request.POST.get('uname', None)
+
+        user_type: Optional[User.UserType] = Util[str, User.UserType].optional_map(
+            User.UserType.try_from_str,
+            request.POST.get('role', None),
+        )
+
+        if new_pass is None or len(new_pass) < 8:
+            return render(request, 'edit_password.html', {
+                'self': maybe_user,
+                'error': UserEditError('Password must be at least 8 characters in length', UserEditPlace.PASSWORD),
+                'pwd': LoginUtil.update_password(maybe_user.pwd),
+            })
+
+        if username is None or len(username) == 0:
+            return render(request, 'edit_username.html', {
+                'self': maybe_user,
+                'error': UserEditError('You must provide a username', UserEditPlace.USERNAME),
+                'pwd': new_pass,
+            })
+        elif len(username) > 50:
+            return render(request, 'edit_username.html', {
+                'self': maybe_user,
+                'error': UserEditError('A username may not be longer than 50 characters', UserEditPlace.USERNAME),
+                'pwd': new_pass,
+            })
+        elif len(''.join(filter(lambda c: c == ' ', iter(username)))) > 0:
+            print(f'found spaces in "{username}"')
+            return render(request, 'edit_username.html', {
+                'self': maybe_user,
+                'error': UserEditError('A username may not have spaces', UserEditPlace.USERNAME),
+                'pwd': new_pass,
+            })
+
+        if user_type is None:
+            return render(request, 'edit_usertype.html', {
+                'self': maybe_user,
+                'error': UserEditError('You must provide a user type', UserEditPlace.TYPE),
+                'pwd': new_pass,
+            })
+
+        name = request.POST.get('name', None)
+        insurance = request.POST.get('ins', None)
+
+        user_id = Users.create_user(user_type, username, new_pass)
+        Users.update_user(Users.get_user_by_user_id(user_id), name, insurance)
+
+        return redirect(reverse('home_Supervisor'))
+'''
 
 class UserStatus(View):
     def get(self, request):
@@ -452,6 +620,7 @@ class EditUsertype(View):
 
 '''
 Code For Acceptance Tests and Unit Tests for Edit user and Insurance, not working at the moment
+
 class EditUsertype(View):
    def get(self, request: HttpRequest):
         user = LoginUtil.get_user_and_validate_by_user_id(request.session, password_change_redirect=False)

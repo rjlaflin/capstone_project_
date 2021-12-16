@@ -30,9 +30,9 @@ class TestDeleteUser(TestCase):
             user_type=User.UserType.Staff
         )
 
-        self.valid_delete_url = reverse('users-delete', args=(self.supervisor.id,))
-        self.valid_delete_self = reverse('users-delete', args=(self.staff.id,))
-        self.invalid_delete_url = reverse('users-delete', args=(340000,))
+        self.valid_delete_url = reverse('delete_users', args=(self.supervisor.id,))
+        self.valid_delete_self = reverse('delete_users', args=(self.staff.id,))
+        self.invalid_delete_url = reverse('delete_users', args=(340000,))
         # Only two users were created so the max valid id is 2
 
         self.session = self.client.session
@@ -54,7 +54,7 @@ class TestDeleteUser(TestCase):
         message: Message = self.get_first_message(resp)
 
         self.assertIsNotNone(resp, 'Post did not return value')
-        self.assertRedirects(resp, reverse('users-directory'))
+        self.assertRedirects(resp, reverse('home_Supervisor'))
 
         self.assertTrue(message.type() is Message.Type.REGULAR, 'Did not send correct message type')
         self.assertEqual(message.message(), f'Successfully deleted user {self.staff_username}',
@@ -66,7 +66,7 @@ class TestDeleteUser(TestCase):
         message: Message = self.get_first_message(resp)
 
         self.assertIsNotNone(resp, 'Post did not return value')
-        self.assertRedirects(resp, reverse('users-directory'))
+        self.assertRedirects(resp, reverse('home_Supervisor'))
 
         self.assertTrue(message.type() is Message.Type.ERROR, 'Did not send correct message type')
         self.assertEqual(message.message(), f'No user with id {340000} exists', 'Did not return correct message')
@@ -84,8 +84,8 @@ class TestDeleteUser(TestCase):
         self.assertIsNotNone(resp_post, 'Post did not return value')
         self.assertIsNotNone(resp_get, 'Get did not return value')
 
-        self.assertRedirects(resp_post, reverse('users-directory'))
-        self.assertRedirects(resp_get, reverse('users-directory'))
+        self.assertRedirects(resp_post, reverse('home_Supervisor'))
+        self.assertRedirects(resp_get, reverse('home_Supervisor'))
 
         self.assertTrue(message_post.type() is Message.Type.ERROR, 'Did not send correct message type')
         self.assertEqual(message_post.message(), f'You do not have permission to delete users',

@@ -12,7 +12,7 @@ class Users:
             unique_id: str,
             password: str,
             name: str = '',
-            # phone: str = ''
+            insurance: str = ''
     ) -> int:
         """
         Create User with mandatory user type, unique_id(front end email), and password, returns user id
@@ -31,7 +31,7 @@ class Users:
             unique_id=unique_id,
             pwd=password,
             name=name,
-            # phone=phone,
+            insurance_information=insurance,
         )
         return new_user.id
 
@@ -90,7 +90,7 @@ class Users:
 
     @staticmethod
     # def update_user(user: User, name: Optional[str] = None, phone: Optional[str] = None):
-    def update_user(user: User, name: Optional[str] = None):
+    def update_user(user: User, name: Optional[str] = None, insurance: Optional[str] = None):
         """
         Updates user for last name, first name, and phone.
         If field is None then does not update, if empty string then removes current.
@@ -98,7 +98,6 @@ class Users:
         if name is not None:
             user.name = name
 
-        '''if phone is not None:
-            user.phone = phone'''
+        user.insurance_information = insurance
 
         user.save()
