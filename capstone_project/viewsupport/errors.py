@@ -7,8 +7,7 @@ P = TypeVar('P', bound=Enum)
 
 class PageError(Generic[P]):
     """
-    Represents an error which may or may not have a headline, and which should be rendered with the
-    `partials/inline_error.html` partial.
+    Represents an error which may or may not have a headline
     """
 
     def __init__(self, msg: str, place: P):
