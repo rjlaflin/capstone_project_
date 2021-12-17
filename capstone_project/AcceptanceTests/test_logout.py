@@ -21,9 +21,9 @@ class TestLogoutView(TestCase):
         self.session['uname'] = self.supervisor_user.id
         self.session.save()
 
-        resp = self.client.get(reverse('home'))
+        resp = self.client.get(reverse('login'))
 
         self.assertIsNone(resp.client.session.get('uname', None), 'Logout did not clear the current user')
 
     def test_rejects_logout_not_logged_in(self):
-        resp = self.client.get(reverse('home'))
+        resp = self.client.get(reverse('login'))

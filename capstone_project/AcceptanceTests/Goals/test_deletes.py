@@ -121,8 +121,8 @@ class TestDeleteGoals(TestCase):
         self.assertIsNotNone(resp_post, 'Post did not return value')
         self.assertIsNotNone(resp_get, 'Get did not return value')
 
-        self.assertRedirects(resp_post, reverse('home'))
-        self.assertRedirects(resp_get, reverse('home'))
+        self.assertRedirects(resp_post, reverse('info'))
+        self.assertRedirects(resp_get, reverse('info'))
 
     def test_delete_removes_goal(self):
         self.client.post(self.valid_delete_url, {}, follow=True)
