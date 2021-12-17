@@ -235,5 +235,5 @@ class TestEditUser(AcceptanceTestCase[UserEditError]):
 
         self.assertContainsMessage(resp_get, Message('You are not allowed to edit other users.', Message.Type.ERROR))
 
-        self.assertRedirects(resp_get, reverse('home_patients'))
+        self.assertRedirects(resp_get, reverse('home_instructor'))
 
