@@ -123,3 +123,14 @@ class Goals(models.Model):
             return cls.status_from_int(maybe_type)
         except TypeError:
             return None
+
+
+'''
+Assign Staff patients, not yet working
+
+class Assignment(models.Model):
+    staff = models.ForeignKey(User, on_delete=models.CASCADE)
+    patient = models.ForeignKey(User, on_delete=models.CASCADE)
+    max_patients = models.IntegerField(verbose_name='Maximum number of patients that this Staff member'
+                                                    ' can be assigned', blank=False)
+'''
