@@ -427,6 +427,10 @@ class AddUser(View):
 
     def post(self, request):
         name = request.POST["name"]
+        new_user = User.objects.filter(name=name)
+        print(new_user.count())
+        if new_user.count():
+            return redirect("add_user.html", {"message": 'Name already exists'})
         uname = request.POST["uname"]
         password = request.POST["pwd"]
         insurance_info = request.POST["ins"]
