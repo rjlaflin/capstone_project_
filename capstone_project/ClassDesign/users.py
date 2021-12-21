@@ -1,7 +1,6 @@
 from capstone_project.models import User
 from typing import Union, Iterable, Optional
 from django.core.exceptions import ObjectDoesNotExist
-import more_itertools
 
 
 class Users:
@@ -61,7 +60,7 @@ class Users:
         Get all users if any exist otherwise return None
         """
         user_set = User.objects.all()
-        return user_set if more_itertools.ilen(user_set) > 0 else None
+        return user_set if user_set.__len__() > 0 else None
         # try:
         #     return User.objects.all()
         # except User.DoesNotExist:
