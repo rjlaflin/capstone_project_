@@ -14,8 +14,8 @@ class Message:
         ERROR = 0,
         REGULAR = 1,
 
-    def __init__(self, messsage: str, ty: Type = Type.REGULAR):
-        self._message = messsage
+    def __init__(self, message: str, ty: Type = Type.REGULAR):
+        self._message = message
         self._ty = ty
 
     def message(self) -> str:
